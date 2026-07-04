@@ -1,0 +1,20 @@
+2026-07-04 20:06:22,879 - INFO - Initializing ML pipeline...
+2026-07-04 20:06:23,537 - INFO - Loaded 24 laptops for the ML pipeline.
+2026-07-04 20:06:23,735 - INFO - Generated synthetic ratings matrix of shape (1000, 24)
+2026-07-04 20:06:23,735 - INFO - Loaded 24 laptops for the ML pipeline.
+2026-07-04 20:06:23,904 - INFO - Generated synthetic ratings matrix of shape (1000, 24)
+2026-07-04 20:06:25,358 - INFO - Model Accuracies (Success Rate %): {'content_based': 65.5, 'collaborative': 72.5, 'knn_classifier': 62.5, 'hybrid': 72.0}
+2026-07-04 20:06:25,358 - INFO - ML pipeline ready.
+ * Serving Flask app 'app'
+ * Debug mode: off
+2026-07-04 20:06:25,361 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-07-04 20:06:25,361 - INFO - [33mPress CTRL+C to quit[0m
+2026-07-04 20:06:29,124 - INFO - 127.0.0.1 - - [04/Jul/2026 20:06:29] "GET /api/laptops HTTP/1.1" 200 -
+2026-07-04 20:06:40,179 - INFO - 127.0.0.1 - - [04/Jul/2026 20:06:40] "POST /api/recommend HTTP/1.1" 200 -
+2026-07-04 20:06:44,012 - INFO - 127.0.0.1 - - [04/Jul/2026 20:06:44] "GET /api/laptops HTTP/1.1" 200 -
+2026-07-04 20:06:44,313 - INFO - 127.0.0.1 - - [04/Jul/2026 20:06:44] "OPTIONS /api/recommend HTTP/1.1" 200 -
+2026-07-04 20:08:40,678 - INFO - 127.0.0.1 - - [04/Jul/2026 20:08:40] "GET /api/laptops HTTP/1.1" 200 -
+2026-07-04 20:08:40,987 - INFO - 127.0.0.1 - - [04/Jul/2026 20:08:40] "POST /api/recommend HTTP/1.1" 200 -
+2026-07-04 20:09:00,388 - INFO - 127.0.0.1 - - [04/Jul/2026 20:09:00] "GET /api/laptops HTTP/1.1" 200 -
+2026-07-04 20:09:00,699 - INFO - 127.0.0.1 - - [04/Jul/2026 20:09:00] "POST /api/recommend HTTP/1.1" 200 -
