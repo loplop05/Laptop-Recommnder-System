@@ -475,8 +475,8 @@ class LaptopRecommenderPipeline:
         # Content score
         user_vec = self.encode_user_preferences(pref)
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
-        # User vector sliced to match 14 dimensions of laptops feature vector
-        cb_sims = self._compute_cosine_similarity(user_vec[:14], lap_vectors)
+        # User vector sliced to match 18 dimensions of laptops feature vector
+        cb_sims = self._compute_cosine_similarity(user_vec[:18], lap_vectors)
         
         # Collaborative score
         train_pref_vectors = np.array([self.encode_user_preferences(self.user_profiles[i]) for i in train_indices])
@@ -558,7 +558,7 @@ class LaptopRecommenderPipeline:
         
         # Rank all laptops for hybrid and content based to get top runner-up recommendations
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
-        cb_sims = self._compute_cosine_similarity(user_pref_vec[:14], lap_vectors)
+        cb_sims = self._compute_cosine_similarity(user_pref_vec[:18], lap_vectors)
         
         # Apply budget penalty to ranks
         budget = float(pref["budget"])
