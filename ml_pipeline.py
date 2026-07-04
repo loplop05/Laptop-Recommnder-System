@@ -1,22 +1,56 @@
 import numpy as np
-import pandas as pd
 import json
 import os
 import random
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics.pairwise import cosine_similarity
 import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class NumpyKNNClassifier:
+    """
+    A pure NumPy implementation of the K-Nearest Neighbors Classifier
+    to replace scikit-learn's classifier, avoiding compiling overhead.
+    """
+    def __init__(self, k=15):
+        self.k = k
+        self.X_train = None
+        self.y_train = None
+        self.num_classes = None
+
+    def fit(self, X, y, num_classes):
+        self.X_train = np.array(X)
+        self.y_train = np.array(y)
+        self.num_classes = num_classes
+
+    def predict_proba(self, X_test):
+        # Ensure 2D
+        if len(X_test.shape) == 1:
+            X_test = X_test.reshape(1, -1)
+            
+        probas = []
+        for x in X_test:
+            # Euclidean distance to all training points
+            dists = np.linalg.norm(self.X_train - x, axis=1)
+            # Indices of the top k nearest neighbors
+            k_indices = np.argsort(dists)[:self.k]
+            neighbor_labels = self.y_train[k_indices]
+            
+            # Count class frequencies
+            counts = np.bincount(neighbor_labels, minlength=self.num_classes)
+            # Convert to probabilities
+            prob = counts / (np.sum(counts) + 1e-9)
+            probas.append(prob)
+            
+        return np.array(probas)
+
 
 class LaptopRecommenderPipeline:
     def __init__(self):
         self.laptops = []
         self.user_profiles = []
         self.ratings_matrix = None
-        self.rf_model = None
+        self.knn_classifier = None
         self.model_accuracies = {}
         
         # Available brands in one-hot order
@@ -262,17 +296,23 @@ class LaptopRecommenderPipeline:
         self.load_data()
         self.generate_synthetic_dataset(num_users=1000)
         
-        # Split user indices
-        indices = np.arange(len(self.user_profiles))
-        train_idx, test_idx = train_test_split(indices, test_size=0.2, random_state=42)
+        # Split user indices (80/20)
+        num_users = len(self.user_profiles)
+        indices = np.arange(num_users)
+        np.random.seed(42)
+        np.random.shuffle(indices)
         
-        # Prepare datasets for Random Forest Classifier
+        split_point = int(num_users * 0.8)
+        train_idx = indices[:split_point]
+        test_idx = indices[split_point:]
+        
+        # Prepare datasets for KNN Classifier
         # Features: 19-dimensional preference vector
-        X_all = np.array([self.encode_user_preferences(self.user_profiles[i]) for i in range(len(self.user_profiles))])
+        X_all = np.array([self.encode_user_preferences(self.user_profiles[i]) for i in range(num_users)])
         
         # Target: ID of the laptop with the maximum rating for this user
         y_all = []
-        for i in range(len(self.user_profiles)):
+        for i in range(num_users):
             best_lap_idx = np.argmax(self.ratings_matrix[i])
             y_all.append(best_lap_idx)
             
@@ -281,12 +321,12 @@ class LaptopRecommenderPipeline:
         X_train, X_test = X_all[train_idx], X_all[test_idx]
         y_train, y_test = y_all[train_idx], y_all[test_idx]
         
-        # 1. Train Random Forest Classifier
-        self.rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-        self.rf_model.fit(X_train, y_train)
+        # Train KNN Classifier
+        self.knn_classifier = NumpyKNNClassifier(k=15)
+        self.knn_classifier.fit(X_train, y_train, num_classes=len(self.laptops))
         
         # Evaluate all 4 models on the test set
-        rf_successes = 0
+        knn_successes = 0
         cb_successes = 0
         cf_successes = 0
         hybrid_successes = 0
@@ -296,7 +336,6 @@ class LaptopRecommenderPipeline:
             pref = self.user_profiles[global_idx]
             actual_ratings = self.ratings_matrix[global_idx]
             
-            # Get recommendations from each model
             # Model A: Content-Based Similarity
             cb_rec_idx = self._recommend_content_based_idx(pref)
             if actual_ratings[cb_rec_idx] >= 4.0:
@@ -307,13 +346,11 @@ class LaptopRecommenderPipeline:
             if actual_ratings[cf_rec_idx] >= 4.0:
                 cf_successes += 1
                 
-            # Model C: Random Forest Classifier
-            rf_pred_probs = self.rf_model.predict_proba(X_test[idx_in_test].reshape(1, -1))[0]
-            # Classes are indices of training labels
-            classes = self.rf_model.classes_
-            rf_rec_idx = classes[np.argmax(rf_pred_probs)]
-            if actual_ratings[rf_rec_idx] >= 4.0:
-                rf_successes += 1
+            # Model C: KNN Classifier
+            knn_pred_probs = self.knn_classifier.predict_proba(X_test[idx_in_test].reshape(1, -1))[0]
+            knn_rec_idx = np.argmax(knn_pred_probs)
+            if actual_ratings[knn_rec_idx] >= 4.0:
+                knn_successes += 1
                 
             # Model D: Hybrid Recommender
             hybrid_rec_idx = self._recommend_hybrid_idx(pref, train_idx)
@@ -324,19 +361,29 @@ class LaptopRecommenderPipeline:
         self.model_accuracies = {
             "content_based": round((cb_successes / total_test) * 100, 2),
             "collaborative": round((cf_successes / total_test) * 100, 2),
-            "random_forest": round((rf_successes / total_test) * 100, 2),
+            "knn_classifier": round((knn_successes / total_test) * 100, 2),
             "hybrid": round((hybrid_successes / total_test) * 100, 2)
         }
         
         logging.info(f"Model Accuracies (Success Rate %): {self.model_accuracies}")
         
+    def _compute_cosine_similarity(self, vec, matrix):
+        """
+        Numpy implementation of cosine similarity between a 1D vector and a 2D matrix.
+        """
+        vec = vec.reshape(-1)
+        dot = np.dot(matrix, vec)
+        vec_norm = np.linalg.norm(vec)
+        matrix_norms = np.linalg.norm(matrix, axis=1)
+        # Avoid division by zero
+        sims = dot / (vec_norm * matrix_norms + 1e-9)
+        return sims
+
     def _recommend_content_based_idx(self, pref):
         """
         Internal: Recommend laptop index using Content-Based similarity.
-        User vector matches laptop vector in same space.
+        User query mapped to laptop feature space.
         """
-        # User query mapped to laptop feature space
-        # Assumes budget = target price, brand matches, screen size matches, etc.
         user_lap_space = []
         
         # 1. Price matching target budget
@@ -368,13 +415,13 @@ class LaptopRecommenderPipeline:
         for b in self.brands_list:
             user_lap_space.append(1.0 if brand_pref == b else (0.5 if brand_pref == "Any" else 0.0))
             
-        user_vec = np.array(user_lap_space).reshape(1, -1)
+        user_vec = np.array(user_lap_space)
         
         # Laptop vectors
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
         
         # Cosine Similarity
-        sims = cosine_similarity(user_vec, lap_vectors)[0]
+        sims = self._compute_cosine_similarity(user_vec, lap_vectors)
         
         # Heavy penalty for laptops exceeding budget by more than 15%
         for i, lap in enumerate(self.laptops):
@@ -388,13 +435,13 @@ class LaptopRecommenderPipeline:
         Internal: Recommend laptop index using preference-based Collaborative Filtering.
         Finds similar users in training set, averages their ratings for laptops.
         """
-        user_vec = self.encode_user_preferences(pref).reshape(1, -1)
+        user_vec = self.encode_user_preferences(pref)
         
         # Encoded preference vectors of training users
         train_pref_vectors = np.array([self.encode_user_preferences(self.user_profiles[i]) for i in train_indices])
         
         # Compute similarities between this query and all training users
-        user_sims = cosine_similarity(user_vec, train_pref_vectors)[0]
+        user_sims = self._compute_cosine_similarity(user_vec, train_pref_vectors)
         
         # Get top K similar users
         K = min(15, len(train_indices))
@@ -426,13 +473,14 @@ class LaptopRecommenderPipeline:
         Scores = 0.5 * Content-Based similarity + 0.5 * Collaborative Rating (normalized).
         """
         # Content score
-        user_vec = self.encode_user_preferences(pref).reshape(1, -1)
+        user_vec = self.encode_user_preferences(pref)
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
-        cb_sims = cosine_similarity(user_vec[:, :14], lap_vectors)[0] # match shapes
+        # User vector sliced to match 14 dimensions of laptops feature vector
+        cb_sims = self._compute_cosine_similarity(user_vec[:14], lap_vectors)
         
         # Collaborative score
         train_pref_vectors = np.array([self.encode_user_preferences(self.user_profiles[i]) for i in train_indices])
-        user_sims = cosine_similarity(user_vec, train_pref_vectors)[0]
+        user_sims = self._compute_cosine_similarity(user_vec, train_pref_vectors)
         K = min(15, len(train_indices))
         top_k_indices = np.argsort(user_sims)[-K:]
         top_k_global_indices = [train_indices[i] for i in top_k_indices]
@@ -445,7 +493,7 @@ class LaptopRecommenderPipeline:
             weighted_ratings += weight * self.ratings_matrix[global_idx]
         predicted_ratings = weighted_ratings / sim_sum
         
-        # Min-max normalize both scores
+        # Min-max normalize both scores to [0, 1]
         cb_min, cb_max = cb_sims.min(), cb_sims.max()
         cb_norm = (cb_sims - cb_min) / (cb_max - cb_min + 1e-9)
         
@@ -479,7 +527,7 @@ class LaptopRecommenderPipeline:
         winning_model = max(self.model_accuracies, key=self.model_accuracies.get)
         
         # Run recommendations for all models to show the user
-        user_pref_vec = self.encode_user_preferences(pref).reshape(1, -1)
+        user_pref_vec = self.encode_user_preferences(pref)
         
         # Get laptop indices for all models
         # Content-Based
@@ -489,10 +537,9 @@ class LaptopRecommenderPipeline:
         train_indices = np.arange(len(self.user_profiles))
         cf_idx = self._recommend_collaborative_idx(pref, train_indices)
         
-        # Random Forest
-        rf_pred_probs = self.rf_model.predict_proba(user_pref_vec)[0]
-        classes = self.rf_model.classes_
-        rf_idx = classes[np.argmax(rf_pred_probs)]
+        # KNN Classifier
+        knn_pred_probs = self.knn_classifier.predict_proba(user_pref_vec.reshape(1, -1))[0]
+        knn_idx = np.argmax(knn_pred_probs)
         
         # Hybrid
         hybrid_idx = self._recommend_hybrid_idx(pref, train_indices)
@@ -501,7 +548,7 @@ class LaptopRecommenderPipeline:
         model_to_idx = {
             "content_based": cb_idx,
             "collaborative": cf_idx,
-            "random_forest": rf_idx,
+            "knn_classifier": knn_idx,
             "hybrid": hybrid_idx
         }
         primary_idx = model_to_idx[winning_model]
@@ -511,7 +558,7 @@ class LaptopRecommenderPipeline:
         
         # Rank all laptops for hybrid and content based to get top runner-up recommendations
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
-        cb_sims = cosine_similarity(user_pref_vec[:, :14], lap_vectors)[0]
+        cb_sims = self._compute_cosine_similarity(user_pref_vec[:14], lap_vectors)
         
         # Apply budget penalty to ranks
         budget = float(pref["budget"])
@@ -538,8 +585,8 @@ class LaptopRecommenderPipeline:
                 recommended_by.append("Content-Based")
             if idx == cf_idx:
                 recommended_by.append("Collaborative Filtering")
-            if idx == rf_idx:
-                recommended_by.append("Random Forest")
+            if idx == knn_idx:
+                recommended_by.append("KNN Classifier")
             if idx == hybrid_idx:
                 recommended_by.append("Hybrid Model")
                 
