@@ -14,6 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = document.getElementById('prev-btn');
     const submitBtn = document.getElementById('submit-btn');
 
+    // Handle Enter key for navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            // Prevent default behavior if it's not the final step (to avoid early form submission)
+            if (currentStep < totalSteps) {
+                e.preventDefault();
+                nextBtn.click();
+            }
+            // If it's the last step, let the default behavior (form submission) happen
+        }
+    });
+
     function updateWizard() {
         console.log('Updating wizard to step:', currentStep);
         steps.forEach(s => s.classList.remove('active'));
@@ -36,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Auto-advance when an option is clicked in step 1 and 3
+    // Auto-advance removed as requested to use Enter key instead
+    /*
     document.querySelectorAll('.option-card input').forEach(input => {
         input.addEventListener('change', () => {
             console.log('Option selected:', input.value);
@@ -51,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+    */
 
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
