@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Recommender System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💻 Laptop Recommender</h1>
+            <p>Find the perfect laptop for your needs in Jordan</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <form id="recommend-form">
+                    <div class="form-group">
+                        <label for="budget">Budget (JOD)</label>
+                        <input type="number" id="budget" name="budget" min="100" max="10000" value="800" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="use_case">Primary Use Case</label>
+                        <select id="use_case" name="use_case" required>
+                            <option value="general">General Use</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="work">Office / Work</option>
+                            <option value="content_creation">Content Creation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="performance">Performance Level</label>
+                        <select id="performance" name="performance" required>
+                            <option value="entry">Entry Level</option>
+                            <option value="medium" selected>Medium / Balanced</option>
+                            <option value="high">High Performance</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="screen_size">Screen Size</label>
+                        <select id="screen_size" name="screen_size" required>
+                            <option value="13-14">13" - 14" (Portable)</option>
+                            <option value="15-16" selected>15" - 16" (Standard)</option>
+                            <option value="17+">17"+ (Large)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="portability">Portability Priority</label>
+                        <select id="portability" name="portability" required>
+                            <option value="low">Low (Desktop Replacement)</option>
+                            <option value="medium" selected>Medium (Standard)</option>
+                            <option value="high">High (Ultraportable)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand">Preferred Brand</label>
+                        <select id="brand" name="brand" required>
+                            <option value="Any">Any Brand</option>
+                            <option value="Apple">Apple</option>
+                            <option value="ASUS">ASUS</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="HP">HP</option>
+                            <option value="Dell">Dell</option>
+                            <option value="Acer">Acer</option>
+                            <option value="MSI">MSI</option>
+                            <option value="Razer">Razer</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="submit-btn">Get Recommendations</button>
+                </form>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <h2>Top Recommendations</h2>
+                <div id="recommendations-container" class="recommendations-grid">
+                    <!-- Recommendations will be injected here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Laptop Recommender System. Prices in JOD.</p>
+            <button id="refresh-prices-btn">Refresh Prices</button>
+        </footer>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>Finding the best laptops for you...</p>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
