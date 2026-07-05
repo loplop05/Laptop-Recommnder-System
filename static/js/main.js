@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorData.error || 'Failed to get recommendations');
             }
 
-            const data = await response.json();
-            displayRecommendations(data.recommendations || []);
+            const result = await response.json();
+            displayRecommendations(result.recommendations || []);
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {
