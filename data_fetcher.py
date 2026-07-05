@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 CACHE_FILE = 'laptops_cache.json'
 ACTIVE_FILE = 'laptops_active.json'
 
-def load_laptops():
+def load_laptops():     
     """
     Load laptops from active file, or fallback to the pristine cache.
     """
