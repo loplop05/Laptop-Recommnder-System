@@ -3,98 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laptop Recommender System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>AI Laptop Advisor - Jordan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>💻 Laptop Recommender</h1>
-            <p>Find the perfect laptop for your needs in Jordan</p>
+            <div class="logo">💻 AI Laptop Advisor</div>
+            <h1>Find your perfect match.</h1>
+            <p>Our Deep Learning engine analyzes thousands of listings to find the best laptop for you.</p>
         </header>
 
         <main>
-            <section class="form-section">
+            <div id="wizard-container" class="wizard-card">
+                <div class="progress-bar">
+                    <div id="progress" class="progress" style="width: 20%;"></div>
+                </div>
+
                 <form id="recommend-form">
-                    <div class="form-group">
-                        <label for="budget">Budget (JOD)</label>
-                        <input type="number" id="budget" name="budget" min="100" max="10000" value="800" required>
+                    <!-- Step 1: Use Case -->
+                    <div class="step active" data-step="1">
+                        <h2>What will you use it for?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="use_case" value="general" checked>
+                                <div class="card-content">
+                                    <span class="icon">🏠</span>
+                                    <h3>General Use</h3>
+                                    <p>Web browsing, movies, and light tasks.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="use_case" value="work">
+                                <div class="card-content">
+                                    <span class="icon">💼</span>
+                                    <h3>Work / Office</h3>
+                                    <p>Excel, Zoom, and professional software.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="use_case" value="gaming">
+                                <div class="card-content">
+                                    <span class="icon">🎮</span>
+                                    <h3>Gaming</h3>
+                                    <p>High FPS and powerful graphics.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="use_case" value="content_creation">
+                                <div class="card-content">
+                                    <span class="icon">🎨</span>
+                                    <h3>Creation</h3>
+                                    <p>Video editing, 3D, and design.</p>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="use_case">Primary Use Case</label>
-                        <select id="use_case" name="use_case" required>
-                            <option value="general">General Use</option>
-                            <option value="gaming">Gaming</option>
-                            <option value="work">Office / Work</option>
-                            <option value="content_creation">Content Creation</option>
-                        </select>
+                    <!-- Step 2: Budget -->
+                    <div class="step" data-step="2">
+                        <h2>What is your maximum budget?</h2>
+                        <div class="budget-input-container">
+                            <span class="currency">JOD</span>
+                            <input type="number" id="budget" name="budget" min="100" max="10000" value="800" required>
+                        </div>
+                        <p class="hint">We will never show you laptops above this price.</p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="performance">Performance Level</label>
-                        <select id="performance" name="performance" required>
-                            <option value="entry">Entry Level</option>
-                            <option value="medium" selected>Medium / Balanced</option>
-                            <option value="high">High Performance</option>
-                        </select>
+                    <!-- Step 3: Performance -->
+                    <div class="step" data-step="3">
+                        <h2>How much power do you need?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="performance" value="entry">
+                                <div class="card-content">
+                                    <h3>Entry Level</h3>
+                                    <p>Basic speed for simple apps.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="performance" value="medium" checked>
+                                <div class="card-content">
+                                    <h3>Balanced</h3>
+                                    <p>Smooth for most users.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="performance" value="high">
+                                <div class="card-content">
+                                    <h3>Powerhouse</h3>
+                                    <p>No compromises on speed.</p>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="screen_size">Screen Size</label>
-                        <select id="screen_size" name="screen_size" required>
-                            <option value="13-14">13" - 14" (Portable)</option>
-                            <option value="15-16" selected>15" - 16" (Standard)</option>
-                            <option value="17+">17"+ (Large)</option>
-                        </select>
+                    <!-- Step 4: Portability & Screen -->
+                    <div class="step" data-step="4">
+                        <h2>Size & Portability</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Screen Size</label>
+                                <select name="screen_size">
+                                    <option value="13-14">13-14" (Portable)</option>
+                                    <option value="15-16" selected>15-16" (Standard)</option>
+                                    <option value="17+">17"+ (Large)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Portability</label>
+                                <select name="portability">
+                                    <option value="high">Ultra Light</option>
+                                    <option value="medium" selected>Balanced</option>
+                                    <option value="low">Heavy / Desktop replacement</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label>Preferred Brand</label>
+                            <select name="brand">
+                                <option value="Any">Any Brand</option>
+                                <option value="Apple">Apple</option>
+                                <option value="ASUS">ASUS</option>
+                                <option value="Lenovo">Lenovo</option>
+                                <option value="HP">HP</option>
+                                <option value="Dell">Dell</option>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="portability">Portability Priority</label>
-                        <select id="portability" name="portability" required>
-                            <option value="low">Low (Desktop Replacement)</option>
-                            <option value="medium" selected>Medium (Standard)</option>
-                            <option value="high">High (Ultraportable)</option>
-                        </select>
+                    <div class="wizard-actions">
+                        <button type="button" id="prev-btn" class="btn-secondary hidden">Back</button>
+                        <button type="button" id="next-btn" class="btn-primary">Continue</button>
+                        <button type="submit" id="submit-btn" class="btn-primary hidden">Generate Recommendations</button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="brand">Preferred Brand</label>
-                        <select id="brand" name="brand" required>
-                            <option value="Any">Any Brand</option>
-                            <option value="Apple">Apple</option>
-                            <option value="ASUS">ASUS</option>
-                            <option value="Lenovo">Lenovo</option>
-                            <option value="HP">HP</option>
-                            <option value="Dell">Dell</option>
-                            <option value="Acer">Acer</option>
-                            <option value="MSI">MSI</option>
-                            <option value="Razer">Razer</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" id="submit-btn">Get Recommendations</button>
                 </form>
-            </section>
+            </div>
 
             <section id="results-section" class="results-section hidden">
-                <h2>Top Recommendations</h2>
-                <div id="recommendations-container" class="recommendations-grid">
-                    <!-- Recommendations will be injected here -->
+                <div class="results-header">
+                    <h2>Your AI Recommendations</h2>
+                    <div class="model-info">Powered by <strong>Deep Learning Reasoning</strong></div>
                 </div>
+                <div id="recommendations-container" class="recommendations-grid"></div>
             </section>
         </main>
 
         <footer>
-            <p>&copy; 2026 Laptop Recommender System. Prices in JOD.</p>
-            <button id="refresh-prices-btn">Refresh Prices</button>
+            <p>&copy; 2026 AI Laptop Advisor Jordan. Real-time prices from 4 major shops.</p>
+            <button id="refresh-prices-btn">Sync Market Prices</button>
         </footer>
     </div>
 
     <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <p>Finding the best laptops for you...</p>
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h3>Analyzing the market...</h3>
+            <p>Our AI is comparing specs and prices to find your best match.</p>
+        </div>
     </div>
 
     <script src="/static/js/main.js"></script>

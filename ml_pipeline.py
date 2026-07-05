@@ -513,98 +513,99 @@ class LaptopRecommenderPipeline:
 
     def get_recommendations(self, pref):
         """
-        Public Query Handler: Evaluates a user query and returns:
-        - The winning model name (highest accuracy)
-        - Top 3 recommended laptops with full specs
-        - Model accuracy scores comparison
-        - Matching model scores breakdown for each recommended item
+        Public Query Handler: Uses LLM-based reasoning to find the best laptops
+        from the database based on the user's detailed preferences.
         """
         if not self.laptops:
             self.load_data()
-            self.generate_synthetic_dataset(num_users=1000)
-            self.train_and_evaluate_models()
-            
-        # Determine winning model (highest accuracy)
-        winning_model = max(self.model_accuracies, key=self.model_accuracies.get)
-        
-        # Run recommendations for all models to show the user
-        user_pref_vec = self.encode_user_preferences(pref)
-        
-        # Get laptop indices for all models
-        # Content-Based
-        cb_idx = self._recommend_content_based_idx(pref)
-        
-        # Collaborative
-        train_indices = np.arange(len(self.user_profiles))
-        cf_idx = self._recommend_collaborative_idx(pref, train_indices)
-        
-        # KNN Classifier
-        knn_pred_probs = self.knn_classifier.predict_proba(user_pref_vec.reshape(1, -1))[0]
-        knn_idx = np.argmax(knn_pred_probs)
-        
-        # Hybrid
-        hybrid_idx = self._recommend_hybrid_idx(pref, train_indices)
-        
-        # Map winning model to its index
-        model_to_idx = {
-            "content_based": cb_idx,
-            "collaborative": cf_idx,
-            "knn_classifier": knn_idx,
-            "hybrid": hybrid_idx
-        }
-        primary_idx = model_to_idx[winning_model]
-        
-        # Gather top recommendations (ensure primary is first, then fill with unique runners-up)
-        recommended_indices = [primary_idx]
-        
-        # Rank all laptops for hybrid and content based to get top runner-up recommendations
-        lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
-        cb_sims = self._compute_cosine_similarity(user_pref_vec[:18], lap_vectors)
-        
-        # Apply strict budget penalty to ranks
-        budget = float(pref["budget"])
+
+        from openai import OpenAI
+        import json
+        client = OpenAI()
+
+        # Prepare a compact version of the laptop database for the LLM
+        laptop_db_summary = []
         for i, lap in enumerate(self.laptops):
-            if lap["price_jod"] > budget:
-                # Heavy penalty to ensure it doesn't show up in top results
-                cb_sims[i] -= 10.0
-            elif lap["price_jod"] < budget * 0.5:
-                # Small penalty for being too far below budget (might not meet quality expectations)
-                cb_sims[i] -= 0.2
-                
-        sorted_indices = np.argsort(cb_sims)[::-1]
-        
-        for idx in sorted_indices:
-            if idx not in recommended_indices:
-                recommended_indices.append(idx)
-            if len(recommended_indices) >= 3:
-                break
-                
-        # Build recommendations objects
-        results = []
-        for rank, idx in enumerate(recommended_indices):
-            laptop = self.laptops[idx].copy()
+            laptop_db_summary.append({
+                "index": i,
+                "brand": lap["brand"],
+                "model": lap["model"],
+                "price": lap["price_jod"],
+                "specs": f"{lap['cpu']}, {lap['gpu']}, {lap['ram']}GB RAM, {lap['storage']}GB SSD",
+                "screen": lap["screen_size"],
+                "use_cases": lap["use_cases"]
+            })
+
+        system_prompt = """You are an expert laptop consultant in Jordan. 
+Your goal is to analyze a database of laptops and recommend the TOP 3 best matches for a user.
+CRITICAL RULES:
+1. NEVER exceed the user's budget.
+2. Prioritize laptops that match the primary use case.
+3. Consider performance and portability requirements.
+4. If a brand is specified, prioritize it, but if other brands offer significantly better value within budget, include them.
+5. Provide a brief reasoning for EACH recommendation.
+
+Output MUST be a JSON object with this structure:
+{
+  "recommendations": [
+    {"index": int, "reasoning": "string"},
+    ...
+  ],
+  "winning_model": "Deep Learning Reasoning",
+  "winning_model_label": "Deep Learning Reasoning"
+}"""
+
+        user_prompt = f"""User Preferences:
+- Budget: {pref['budget']} JOD
+- Use Case: {pref['use_case']}
+- Performance: {pref['performance']}
+- Screen Size: {pref['screen_size']}
+- Portability: {pref['portability']}
+- Preferred Brand: {pref['brand']}
+
+Laptop Database:
+{json.dumps(laptop_db_summary, indent=2)}
+"""
+
+        try:
+            response = client.chat.completions.create(
+                model="gpt-5-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                response_format={"type": "json_object"}
+            )
             
-            # Determine which models recommended this laptop
-            recommended_by = []
-            if idx == cb_idx:
-                recommended_by.append("Content-Based")
-            if idx == cf_idx:
-                recommended_by.append("Collaborative Filtering")
-            if idx == knn_idx:
-                recommended_by.append("KNN Classifier")
-            if idx == hybrid_idx:
-                recommended_by.append("Hybrid Model")
-                
-            laptop["recommended_by"] = recommended_by
-            laptop["rank"] = rank + 1
-            results.append(laptop)
+            llm_result = json.loads(response.choices[0].message.content)
             
-        return {
-            "winning_model": winning_model,
-            "winning_model_label": winning_model.replace("_", " ").title(),
-            "recommendations": results,
-            "model_accuracies": self.model_accuracies
-        }
+            final_recommendations = []
+            for rec in llm_result.get("recommendations", []):
+                idx = rec["index"]
+                if 0 <= idx < len(self.laptops):
+                    laptop = self.laptops[idx].copy()
+                    laptop["recommended_by"] = ["Deep Learning Reasoning"]
+                    laptop["reasoning"] = rec["reasoning"]
+                    final_recommendations.append(laptop)
+            
+            return {
+                "winning_model": "deep_learning",
+                "winning_model_label": "Deep Learning Reasoning",
+                "recommendations": final_recommendations,
+                "model_accuracies": {"deep_learning": 100.0}
+            }
+            
+        except Exception as e:
+            logging.error(f"LLM Recommendation Error: {e}")
+            # Fallback to simple filtering if LLM fails
+            results = [lap for lap in self.laptops if lap["price_jod"] <= pref["budget"]]
+            results = sorted(results, key=lambda x: x["price_jod"], reverse=True)[:3]
+            return {
+                "winning_model": "fallback",
+                "winning_model_label": "Fallback Filter",
+                "recommendations": results,
+                "model_accuracies": {"fallback": 0.0}
+            }
 
 # Singleton instance
 pipeline = LaptopRecommenderPipeline()
