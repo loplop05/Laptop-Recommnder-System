@@ -26,7 +26,7 @@ def set_security_headers(response):
         "script-src 'self'; "
         "style-src 'self' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' https://images.unsplash.com https://pccircle.com data:; "
+        "img-src 'self' https://images.unsplash.com https://pccircle.com https://citycenter.jo https://gts.jo https://os-jo.com data:; "
         "connect-src 'self'; "
         "object-src 'none'; "
         "frame-ancestors 'none';"
@@ -200,10 +200,10 @@ def refresh_prices():
     Falls back silently to local cache if scraping fails.
     """
     try:
-        from data_fetcher import scrape_pc_circle
-        success, count = scrape_pc_circle()
+        from data_fetcher import scrape_all_shops
+        success, count = scrape_all_shops()
         if success:
-            return jsonify({'message': f'Prices refreshed. {count} laptop(s) updated.', 'updated': count})
+            return jsonify({'message': f'Prices refreshed. {count} laptop(s) updated across all shops.', 'updated': count})
         else:
             return jsonify({'message': 'Prices are up to date (no changes from online sources).', 'updated': 0})
     except Exception as e:

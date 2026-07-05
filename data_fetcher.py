@@ -116,9 +116,9 @@ def match_laptop(scraped_title, scraped_price, scraped_link, scraped_img, laptop
 
     return best_match
 
-def scrape_pc_circle():
+def scrape_generic(url_template, product_selector, title_selector, price_selector, link_selector, img_selector, pages=2):
     """
-    Scrape laptop listings from PC Circle and update active pricing.
+    Generic scraper for WooCommerce/OpenCart based Jordanian shops.
     """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -126,89 +126,107 @@ def scrape_pc_circle():
     
     laptops = load_laptops()
     if not laptops:
-        logging.error("No laptops available to update.")
         return False, 0
         
     updated_count = 0
     matched_ids = set()
     
-    # Scrape first 2 pages of laptop listings
-    for page in range(1, 3):
-        url = f"https://pccircle.com/product-category/laptops/page/{page}/"
-        logging.info(f"Scraping page {page}: {url}")
+    for page in range(1, pages + 1):
+        url = url_template.format(page=page)
+        logging.info(f"Scraping: {url}")
         
         try:
-            # Short timeout to avoid blocking if the site is slow
-            response = requests.get(url, headers=headers, timeout=12)
+            response = requests.get(url, headers=headers, timeout=15)
             if response.status_code != 200:
                 logging.warning(f"Failed to fetch {url}, status code: {response.status_code}")
-                break
+                continue
                 
             soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Find product cards (typically 'li.product' or 'div.product-grid-item' in WooCommerce)
-            products = soup.select('li.product') or soup.select('.product-grid-item') or soup.select('.product')
+            products = soup.select(product_selector)
             
             if not products:
-                logging.warning(f"No products found on page {page} with standard selectors.")
-                break
+                logging.warning(f"No products found on {url}")
+                continue
                 
             for product in products:
-                # Title
-                title_elem = product.select_one('.woocommerce-loop-product__title') or product.select_one('.product-title') or product.select_one('h2') or product.select_one('h3')
-                if not title_elem:
-                    continue
-                title = title_elem.text.strip()
-                
-                # Price
-                price_elem = product.select_one('.price') or product.select_one('.woocommerce-Price-amount')
-                if not price_elem:
-                    continue
-                price_text = price_elem.text.strip()
-                price = clean_price(price_text)
-                
-                if not price or price < 100:  # Ignore weirdly low prices or missing prices
+                title_elem = product.select_one(title_selector)
+                price_elem = product.select_one(price_selector)
+                if not title_elem or not price_elem:
                     continue
                     
-                # Link
-                link_elem = product.select_one('a')
+                title = title_elem.text.strip()
+                price = clean_price(price_elem.text.strip())
+                
+                if not price or price < 100:
+                    continue
+                    
+                link_elem = product.select_one(link_selector)
                 link = link_elem['href'] if link_elem and link_elem.has_attr('href') else url
                 
-                # Image
-                img_elem = product.select_one('img')
-                img = img_elem['src'] if img_elem and img_elem.has_attr('src') else None
-                if img and 'placeholder' in img and img_elem.has_attr('data-src'):
-                    img = img_elem['data-src']
+                img_elem = product.select_one(img_selector)
+                img = None
+                if img_elem:
+                    img = img_elem.get('src') or img_elem.get('data-src') or img_elem.get('srcset')
+                    if img and ',' in img: # Handle srcset
+                        img = img.split(',')[0].split(' ')[0]
                 
-                # Try to match with database
                 matched = match_laptop(title, price, link, img, laptops)
                 if matched and matched['id'] not in matched_ids:
-                    # Update price
-                    old_price = matched['price_jod']
                     matched['price_jod'] = price
-                    
-                    # Ensure the purchase URL is the specific product page, not the category page
-                    if link and 'product-category' not in link:
+                    if link and 'product-category' not in link and 'search' not in link:
                         matched['purchase_url'] = link
-                    
-                    # Update image only if it's a valid link and we don't have a high-res unsplash one
-                    if img and (not matched['image_url'] or 'unsplash' not in matched['image_url']):
+                    if img and (not matched.get('image_url') or 'unsplash' not in matched['image_url']):
                         matched['image_url'] = img
                         
                     matched_ids.add(matched['id'])
                     updated_count += 1
-                    logging.info(f"Updated {matched['brand']} {matched['model']}: {old_price} JOD -> {price} JOD")
+                    logging.info(f"Updated {matched['brand']} {matched['model']} from {url.split('/')[2]}: {price} JOD")
                     
         except Exception as e:
-            logging.error(f"Error scraping PC Circle page {page}: {e}")
-            break
+            logging.error(f"Error scraping {url}: {e}")
             
     if updated_count > 0:
         save_laptops(laptops)
         return True, updated_count
     return False, 0
 
+def scrape_all_shops():
+    """
+    Run scrapers for all supported shops.
+    """
+    shops = [
+        {
+            "name": "PC Circle",
+            "url": "https://pccircle.com/product-category/laptops/page/{page}/",
+            "p": "li.product", "t": ".woocommerce-loop-product__title", "pr": ".price", "l": "a", "i": "img"
+        },
+        {
+            "name": "City Center",
+            "url": "https://citycenter.jo/index.php?route=product/search&search=laptop&page={page}",
+            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
+        },
+        {
+            "name": "OS-JO",
+            "url": "https://os-jo.com/index.php?route=product/search&search=laptop&page={page}",
+            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
+        },
+        {
+            "name": "GTS",
+            "url": "https://gts.jo/en/laptops-tablets/laptops/laptop-notebooks?page={page}",
+            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
+        }
+    ]
+    
+    total_updated = 0
+    for shop in shops:
+        success, count = scrape_generic(shop["url"], shop["p"], shop["t"], shop["pr"], shop["l"], shop["i"])
+        if success:
+            total_updated += count
+            logging.info(f"Shop {shop['name']} update successful: {count} laptops.")
+            
+    return total_updated > 0, total_updated
+
 if __name__ == '__main__':
-    logging.info("Running standalone scrape test...")
-    success, count = scrape_pc_circle()
-    logging.info(f"Scrape completed. Success: {success}, Updated: {count} laptops.")
+    logging.info("Running multi-shop scrape test...")
+    success, count = scrape_all_shops()
+    logging.info(f"Scrape completed. Success: {success}, Total Updated: {count} laptops.")
