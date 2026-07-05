@@ -1,10 +1,9 @@
 from asyncio import transports
-from _typeshed import importlib
-import os
 import re
 import json
 import logging
 import requests
+import os
 
 # pyrefly: ignore [missing-import]
 from bs4 import  BeautifulSoup   
@@ -190,6 +189,7 @@ def scrape_generic(url_template, product_selector, title_selector, price_selecto
         except Exception as e:
             logging.error(f"Error scraping {url}: {e}")
             
+            
     if updated_count > 0:
         save_laptops(laptops)
         return True, updated_count
@@ -210,11 +210,7 @@ def scrape_all_shops():
             "url": "https://citycenter.jo/index.php?route=product/search&search=laptop&page={page}",
             "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
         },
-        {
-            "name": "OS-JO",
-            "url": "https://os-jo.com/index.php?route=product/search&search=laptop&page={page}",
-            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
-        },
+        
         {
             "name": "GTS",
             "url": "https://gts.jo/en/laptops-tablets/laptops/laptop-notebooks?page={page}",

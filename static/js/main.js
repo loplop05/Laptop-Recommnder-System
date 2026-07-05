@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    updateWizard();
+
     function updateWizard() {
         console.log('Updating wizard to step:', currentStep);
         steps.forEach(s => s.classList.remove('active'));
