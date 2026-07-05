@@ -62,6 +62,8 @@ header p {
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
     margin-bottom: 4rem;
+    position: relative;
+    z-index: 10;
 }
 
 .progress-bar {
@@ -214,6 +216,8 @@ select {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s;
+    position: relative;
+    z-index: 20;
 }
 
 .btn-primary:hover {

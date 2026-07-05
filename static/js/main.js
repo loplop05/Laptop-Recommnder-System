@@ -35,14 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Next clicked, current step:', currentStep);
         if (currentStep < totalSteps) {
             currentStep++;
             updateWizard();
         }
     });
 
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Prev clicked, current step:', currentStep);
         if (currentStep > 1) {
             currentStep--;
             updateWizard();
