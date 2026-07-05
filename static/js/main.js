@@ -20,26 +20,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeStep = document.querySelector(`.step[data-step="${currentStep}"]`);
         if (activeStep) {
             activeStep.classList.add('active');
-        } else {
-            console.error('Could not find step element for step:', currentStep);
         }
         
         progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
 
-        if (currentStep === 1) {
-            prevBtn.classList.add('hidden');
-        } else {
-            prevBtn.classList.remove('hidden');
-        }
-
+        // Always show navigation buttons clearly
+        prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+        
         if (currentStep === totalSteps) {
-            nextBtn.classList.add('hidden');
-            submitBtn.classList.remove('hidden');
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
         } else {
-            nextBtn.classList.remove('hidden');
-            submitBtn.classList.add('hidden');
+            nextBtn.style.display = 'block';
+            submitBtn.style.display = 'none';
         }
     }
+
+    // Auto-advance when an option is clicked in step 1 and 3
+    document.querySelectorAll('.option-card input').forEach(input => {
+        input.addEventListener('change', () => {
+            console.log('Option selected:', input.value);
+            // Delay slightly for visual feedback of selection
+            if (currentStep === 1 || currentStep === 3) {
+                setTimeout(() => {
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        updateWizard();
+                    }
+                }, 400);
+            }
+        });
+    });
 
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
