@@ -17,12 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle Enter key for navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            // Prevent default behavior if it's not the final step (to avoid early form submission)
+            // Check if the focus is on a button or link, if so, let the default behavior happen
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+                return;
+            }
+
             if (currentStep < totalSteps) {
                 e.preventDefault();
                 nextBtn.click();
+            } else {
+                // On the last step, trigger the submit button
+                e.preventDefault();
+                submitBtn.click();
             }
-            // If it's the last step, let the default behavior (form submission) happen
         }
     });
 
@@ -36,15 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
 
-        // Always show navigation buttons clearly
-        prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+        // Use 'hidden' class for consistency with CSS
+        if (currentStep === 1) {
+            prevBtn.classList.add('hidden');
+        } else {
+            prevBtn.classList.remove('hidden');
+        }
         
         if (currentStep === totalSteps) {
-            nextBtn.style.display = 'none';
-            submitBtn.style.display = 'block';
+            nextBtn.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
         } else {
-            nextBtn.style.display = 'block';
-            submitBtn.style.display = 'none';
+            nextBtn.classList.remove('hidden');
+            submitBtn.classList.add('hidden');
         }
     }
 
