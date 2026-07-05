@@ -617,6 +617,4 @@ def init_pipeline():
         pipeline.train_and_evaluate_models()
     return pipeline
 
-def returner():
-    return pipeline
-    
+
