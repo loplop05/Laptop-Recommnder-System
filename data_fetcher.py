@@ -236,3 +236,4 @@ if __name__ == '__main__':
     logging.info("Running multi-shop scrape test...")
     success, count = scrape_all_shops()
     logging.info(f"Scrape completed. Success: {success}, Total Updated: {count} laptops.")
+    
