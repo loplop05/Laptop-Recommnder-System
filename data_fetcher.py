@@ -1,9 +1,12 @@
+from _typeshed import importlib
 import os
 import re
 import json
 import logging
 import requests
-from bs4 import BeautifulSoup
+# pyrefly: ignore [missing-import]
+import bs4     
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -193,8 +196,7 @@ def scrape_generic(url_template, product_selector, title_selector, price_selecto
 def scrape_all_shops():
     """
     Run scrapers for all supported shops.
-    """
-    shops = [
+    """shops = [
         {
             "name": "PC Circle",
             "url": "https://pccircle.com/product-category/laptops/page/{page}/",
@@ -216,6 +218,7 @@ def scrape_all_shops():
             "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
         }
     ]
+    
     
     total_updated = 0
     for shop in shops:

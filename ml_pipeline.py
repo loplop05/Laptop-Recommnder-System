@@ -616,3 +616,7 @@ def init_pipeline():
         pipeline.generate_synthetic_dataset(num_users=1000)
         pipeline.train_and_evaluate_models()
     return pipeline
+
+def returner():
+    return pipeline
+    
