@@ -186,9 +186,13 @@ def scrape_pc_circle():
                     # Update price
                     old_price = matched['price_jod']
                     matched['price_jod'] = price
-                    matched['purchase_url'] = link
+                    
+                    # Ensure the purchase URL is the specific product page, not the category page
+                    if link and 'product-category' not in link:
+                        matched['purchase_url'] = link
+                    
                     # Update image only if it's a valid link and we don't have a high-res unsplash one
-                    if img and not matched['image_url'].startswith('https://images.unsplash.com'):
+                    if img and (not matched['image_url'] or 'unsplash' not in matched['image_url']):
                         matched['image_url'] = img
                         
                     matched_ids.add(matched['id'])

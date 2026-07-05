@@ -170,14 +170,15 @@ class LaptopRecommenderPipeline:
         price = laptop["price_jod"]
         if price <= budget:
             # Under budget is good
-            score += 1.0
+            score += 1.5
             # Small bonus if it uses budget efficiently (close to max budget)
-            if price >= budget * 0.75:
+            if price >= budget * 0.7:
                 score += 0.5
         else:
-            # Over budget penalizes heavily
+            # Over budget penalizes extremely heavily to enforce range
             pct_over = (price - budget) / budget
-            score -= min(3.0, pct_over * 6.0)
+            score -= (2.0 + pct_over * 10.0)
+            score = max(0.0, score)
             
         # 2. Use Case Fit
         use_case = pref["use_case"]
@@ -560,11 +561,15 @@ class LaptopRecommenderPipeline:
         lap_vectors = np.array([self.encode_laptop(lap) for lap in self.laptops])
         cb_sims = self._compute_cosine_similarity(user_pref_vec[:18], lap_vectors)
         
-        # Apply budget penalty to ranks
+        # Apply strict budget penalty to ranks
         budget = float(pref["budget"])
         for i, lap in enumerate(self.laptops):
             if lap["price_jod"] > budget:
-                cb_sims[i] -= 1.0
+                # Heavy penalty to ensure it doesn't show up in top results
+                cb_sims[i] -= 10.0
+            elif lap["price_jod"] < budget * 0.5:
+                # Small penalty for being too far below budget (might not meet quality expectations)
+                cb_sims[i] -= 0.2
                 
         sorted_indices = np.argsort(cb_sims)[::-1]
         

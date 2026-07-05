@@ -161,7 +161,18 @@ button#submit-btn:hover {
 .laptop-model {
     font-size: 1.25rem;
     font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.recommended-badge {
+    font-size: 0.75rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    display: inline-block;
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .laptop-specs {

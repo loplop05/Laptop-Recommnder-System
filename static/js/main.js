@@ -88,17 +88,19 @@ document.addEventListener('DOMContentLoaded', () => {
         card.className = 'laptop-card';
         
         const imageUrl = laptop.image_url || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80';
+        const recommendedBy = laptop.recommended_by ? laptop.recommended_by.join(', ') : 'ML Pipeline';
         
         card.innerHTML = `
             <img src="${imageUrl}" alt="${laptop.model}" class="laptop-image" onerror="this.src='https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80'">
             <div class="laptop-content">
                 <div class="laptop-brand">${laptop.brand}</div>
                 <div class="laptop-model">${laptop.model}</div>
+                <div class="recommended-badge">Recommended by: ${recommendedBy}</div>
                 <div class="laptop-specs">
                     <div class="spec-item"><span class="spec-label">CPU:</span> ${laptop.cpu}</div>
                     <div class="spec-item"><span class="spec-label">GPU:</span> ${laptop.gpu}</div>
-                    <div class="spec-item"><span class="spec-label">RAM:</span> ${laptop.ram}</div>
-                    <div class="spec-item"><span class="spec-label">Storage:</span> ${laptop.storage}</div>
+                    <div class="spec-item"><span class="spec-label">RAM:</span> ${laptop.ram}GB</div>
+                    <div class="spec-item"><span class="spec-label">Storage:</span> ${laptop.storage}GB</div>
                     <div class="spec-item"><span class="spec-label">Screen:</span> ${laptop.screen_size}"</div>
                 </div>
                 <div class="laptop-price">${laptop.price_jod} JOD</div>
