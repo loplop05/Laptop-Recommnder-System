@@ -1,6 +1,6 @@
-flask==3.0.3
-requests==2.32.3
-beautifulsoup4==4.12.3
-numpy==2.5.1
+flask
+requests
+beautifulsoup4
+numpy
 openai
 os
