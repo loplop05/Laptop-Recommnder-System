@@ -4,8 +4,9 @@ import re
 import json
 import logging
 import requests
+
 # pyrefly: ignore [missing-import]
-import bs4     
+from bs4 import  BeautifulSoup   
 
 
 # Configure logging
@@ -196,7 +197,8 @@ def scrape_generic(url_template, product_selector, title_selector, price_selecto
 def scrape_all_shops():
     """
     Run scrapers for all supported shops.
-    """shops = [
+    """
+    shops = [
         {
             "name": "PC Circle",
             "url": "https://pccircle.com/product-category/laptops/page/{page}/",

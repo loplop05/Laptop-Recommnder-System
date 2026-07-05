@@ -519,6 +519,7 @@ class LaptopRecommenderPipeline:
         if not self.laptops:
             self.load_data()
 
+        # pyrefly: ignore [missing-import]
         from openai import OpenAI
         import json
         client = OpenAI()
