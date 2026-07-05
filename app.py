@@ -10,7 +10,7 @@ from flask import Flask, render_template, jsonify, request, abort
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # ─── Application factory ──────────────────────────────────────────────────────
-app = Flask(__name__, static_folder='static', template_folder='static')
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 # TODO(security): In production, serve over HTTPS via a reverse proxy (nginx/caddy).
 # TODO(security): Consider OAuth providers for any future user accounts.
@@ -96,6 +96,9 @@ def get_pipeline():
 @app.route('/')
 def index():
     """Serve the main SPA."""
+    # Ensure index.html exists before serving
+    if not os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return "Frontend files not found. Please ensure 'static/index.html' exists.", 404
     return app.send_static_file('index.html')
 
 

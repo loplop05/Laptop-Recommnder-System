@@ -15,8 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('submit-btn');
 
     function updateWizard() {
+        console.log('Updating wizard to step:', currentStep);
         steps.forEach(s => s.classList.remove('active'));
-        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        const activeStep = document.querySelector(`.step[data-step="${currentStep}"]`);
+        if (activeStep) {
+            activeStep.classList.add('active');
+        } else {
+            console.error('Could not find step element for step:', currentStep);
+        }
         
         progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
 
@@ -37,7 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('Next clicked, current step:', currentStep);
+        console.log('Next button clicked. Current step:', currentStep);
+        
+        // Validation for step 1: Use Case
+        if (currentStep === 1) {
+            const useCase = document.querySelector('input[name="use_case"]:checked');
+            if (!useCase) {
+                alert('Please select a use case.');
+                return;
+            }
+            console.log('Step 1 validated:', useCase.value);
+        }
+
         if (currentStep < totalSteps) {
             currentStep++;
             updateWizard();
