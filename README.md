@@ -30,19 +30,36 @@ The Laptop Recommender System uses a hybrid machine learning approach combining 
 - Node.js 22+
 - pnpm (or npm/yarn)
 
-### Backend Setup
+### Backend Setup & Environment Bootstrap
 
-1. **Install dependencies:**
+We provide a cross-platform Python bootstrap script that handles virtual environment creation, pip upgrades, dependency installation, `.env` file copying, and local system health diagnostics.
+
+1. **Bootstrap the environment:**
    ```bash
    cd Laptop-Recommnder-System
-   pip install -r requirements.txt
+   python bootstrap.py
    ```
+   *Note: This script works on Windows, macOS, and Linux.*
 
-2. **Run the Flask server:**
-   ```bash
-   python3 app.py
+2. **Configure your environment variables:**
+   Open the newly generated `.env` file in the root of the backend directory and set your `OPENAI_API_KEY`:
+   ```env
+   OPENAI_API_KEY=sk-proj-...
    ```
-   The backend will start on `http://localhost:5000`
+   *Note: If no API key is specified, the system will fallback to local ML hybrid recommendation model logic.*
+
+3. **Run the Flask server:**
+   ```bash
+   # Activate the virtual environment
+   # Windows:
+   .venv\Scripts\activate
+   # macOS/Linux:
+   source .venv/bin/activate
+
+   # Start the application
+   python app.py
+   ```
+   The backend will start on `http://127.0.0.1:5000`
 
 ### Frontend Setup
 

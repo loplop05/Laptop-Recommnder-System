@@ -6,6 +6,9 @@ from functools import wraps
 # pyrefly: ignore [missing-import]
 from flask import Flask, render_template, jsonify, request, abort
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Configure logging — do NOT log sensitive user data
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

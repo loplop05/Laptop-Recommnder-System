@@ -1,6 +1,6 @@
 import logging
 from ml_pipeline import LaptopRecommenderPipeline
-from data_fetcher import scrape_pc_circle, load_laptops
+from data_fetcher import scrape_all_shops, load_laptops
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,7 +28,7 @@ def test_pipeline():
 def test_scraper():
     print("\n--- Testing Scraper ---")
     # Note: This might fail if the site is down or blocking, but we check the logic
-    success, count = scrape_pc_circle()
+    success, count = scrape_all_shops()
     print(f"Scraper Success: {success}, Updated: {count}")
 
 if __name__ == "__main__":
