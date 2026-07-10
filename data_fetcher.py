@@ -108,8 +108,8 @@ def match_laptop(scraped_title, scraped_price, scraped_link, scraped_img, laptop
             score += 2
             
         # Check RAM size
-        ram_str = f"{laptop['ram']}gb"
-        ram_alt = f"{laptop['ram']} gb"
+        ram_str = f"{laptop['ram']} GB"
+        ram_alt = f"{laptop['ram']}GB"
         if ram_str in title_lower or ram_alt in title_lower:
             score += 3
             
