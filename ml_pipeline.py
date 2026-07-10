@@ -600,7 +600,7 @@ Laptop Database:
             }
             
         except Exception as e:
-            logging.error(f"LLM Recommendation Error: {e}")
+            logging.error(f"Recommendation Error: {e}")
             # Fallback to simple filtering if LLM fails
             results = [lap for lap in self.laptops if lap["price_jod"] <= pref["budget"]]
             results = sorted(results, key=lambda x: x["price_jod"], reverse=True)[:3]
@@ -611,7 +611,6 @@ Laptop Database:
                 "model_accuracies": {"fallback": 0.0}
             }
 
-# Singleton instance
 pipeline = LaptopRecommenderPipeline()
 
 def init_pipeline():

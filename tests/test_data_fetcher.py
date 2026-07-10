@@ -112,7 +112,6 @@ def test_scrape_generic(mock_save, mock_load, mock_get):
     assert success is True
     assert count == 1
     
-    # Verify that database price was updated to 760 JOD
     updated_laptop = mock_load.return_value[0]
     assert updated_laptop["price_jod"] == 760
     assert updated_laptop["purchase_url"] == "http://shop.com/product/asus-tuf-a15"
