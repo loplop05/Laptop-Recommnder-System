@@ -8,6 +8,7 @@ numpy==2.4.6
 
 # --- API, Server, Scraping & LLM ---
 Flask==3.1.3
+gunicorn==21.2.0
 requests==2.34.2
 beautifulsoup4==4.15.0
 openai==2.44.0
