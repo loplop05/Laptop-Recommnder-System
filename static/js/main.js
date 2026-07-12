@@ -132,8 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to get recommendations');
+                let errMsg = `Server error (${response.status})`;
+                try {
+                    const ct = response.headers.get('content-type') || '';
+                    if (ct.includes('application/json')) {
+                        const errorData = await response.json();
+                        errMsg = errorData.error || errMsg;
+                    } else {
+                        errMsg = `${errMsg}: ${response.statusText}`;
+                    }
+                } catch (_) { /* ignore secondary parse error */ }
+                throw new Error(errMsg);
             }
 
             const result = await response.json();

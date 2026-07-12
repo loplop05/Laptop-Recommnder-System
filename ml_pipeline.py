@@ -616,8 +616,10 @@ def init_pipeline():
     global pipeline
     if not pipeline.laptops:
         pipeline.load_data()
-        pipeline.generate_synthetic_dataset(num_users=1000)
-        pipeline.train_and_evaluate_models()
+        # NOTE: generate_synthetic_dataset + train_and_evaluate_models are
+        # skipped at startup to avoid OOM on low-memory cloud hosts (Render free).
+        # The get_recommendations() method uses the OpenAI LLM path which only
+        # needs pipeline.laptops to be populated.
     return pipeline
 
 

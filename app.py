@@ -219,8 +219,6 @@ def refresh_prices():
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 if __name__ == '__main__':
-    # Pre-warm the pipeline before accepting requests
-    get_pipeline()
     # In production (Render, Railway, etc.) PORT is injected via environment.
     # Locally it falls back to 5000 on localhost.
     port = int(os.environ.get('PORT', 5000))
