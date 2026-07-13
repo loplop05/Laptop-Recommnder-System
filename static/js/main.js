@@ -4,20 +4,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('recommendations-container');
     const loadingOverlay = document.getElementById('loading-overlay');
     const refreshBtn = document.getElementById('refresh-prices-btn');
+    const startOverBtn = document.getElementById('start-over-btn');
 
     // Wizard Logic
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 7;
     const steps = document.querySelectorAll('.step');
     const progressBar = document.getElementById('progress');
+    const stepCount = document.getElementById('step-count');
     const nextBtn = document.getElementById('next-btn');
     const prevBtn = document.getElementById('prev-btn');
     const submitBtn = document.getElementById('submit-btn');
 
+    // Budget slider live update
+    const budgetSlider = document.getElementById('budget');
+    const budgetOutput = document.getElementById('budget-output');
+
+    budgetSlider.addEventListener('input', (e) => {
+        budgetOutput.textContent = e.target.value;
+    });
+
     // Handle Enter key for navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            // Check if the focus is on a button or link, if so, let the default behavior happen
             if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
                 return;
             }
@@ -26,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 nextBtn.click();
             } else {
-                // On the last step, trigger the submit button
                 e.preventDefault();
                 submitBtn.click();
             }
@@ -42,16 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeStep) {
             activeStep.classList.add('active');
         }
-        
-        progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
 
-        // Use 'hidden' class for consistency with CSS
+        // Update progress bar
+        const progressPercent = (currentStep / totalSteps) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        stepCount.textContent = `Step ${currentStep} of ${totalSteps}`;
+
+        // Update button visibility
         if (currentStep === 1) {
             prevBtn.classList.add('hidden');
         } else {
             prevBtn.classList.remove('hidden');
         }
-        
+
         if (currentStep === totalSteps) {
             nextBtn.classList.add('hidden');
             submitBtn.classList.remove('hidden');
@@ -59,30 +70,30 @@ document.addEventListener('DOMContentLoaded', () => {
             nextBtn.classList.remove('hidden');
             submitBtn.classList.add('hidden');
         }
+
+        // Scroll to wizard
+        document.getElementById('wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Auto-advance removed as requested to use Enter key instead
-    /*
+    // Auto-advance on card selection for certain steps
     document.querySelectorAll('.option-card input').forEach(input => {
         input.addEventListener('change', () => {
-            console.log('Option selected:', input.value);
-            // Delay slightly for visual feedback of selection
-            if (currentStep === 1 || currentStep === 3) {
+            // Auto-advance on steps 1, 3, 4, 5, 6 (use case, screen, portability, performance, os)
+            if ([1, 3, 4, 5, 6].includes(currentStep)) {
                 setTimeout(() => {
                     if (currentStep < totalSteps) {
                         currentStep++;
                         updateWizard();
                     }
-                }, 400);
+                }, 300);
             }
         });
     });
-    */
 
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
         console.log('Next button clicked. Current step:', currentStep);
-        
+
         // Validation for step 1: Use Case
         if (currentStep === 1) {
             const useCase = document.querySelector('input[name="use_case"]:checked');
@@ -90,7 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please select a use case.');
                 return;
             }
-            console.log('Step 1 validated:', useCase.value);
+        }
+
+        // Validation for step 2: Budget
+        if (currentStep === 2) {
+            const budget = parseInt(budgetSlider.value);
+            if (budget < 100 || budget > 10000) {
+                alert('Please set a valid budget between 100 and 10000 JOD.');
+                return;
+            }
         }
 
         if (currentStep < totalSteps) {
@@ -111,19 +130,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form Submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const formData = new FormData(form);
+
+        // Get form values
+        const useCase = document.querySelector('input[name="use_case"]:checked').value;
+        const budget = parseInt(budgetSlider.value);
+        const screenSize = document.querySelector('input[name="screen_size"]:checked').value;
+        const portability = document.querySelector('input[name="portability"]:checked').value;
+        const performance = document.querySelector('input[name="performance"]:checked').value;
+        const osPreference = document.querySelector('input[name="os_preference"]:checked').value;
+        const brand = document.querySelector('input[name="brand"]:checked').value;
+
+        // Map OS preference to brand for backend
+        let mappedBrand = brand;
+        if (brand === 'Any') {
+            // If user selected a specific OS, map it
+            if (osPreference === 'macos') {
+                mappedBrand = 'Apple';
+            } else if (osPreference === 'windows') {
+                mappedBrand = 'Any'; // Windows is available from all brands
+            } else {
+                mappedBrand = 'Any';
+            }
+        }
+
         const data = {
-            budget: parseInt(formData.get('budget')),
-            use_case: formData.get('use_case'),
-            performance: formData.get('performance'),
-            screen_size: formData.get('screen_size'),
-            portability: formData.get('portability'),
-            brand: formData.get('brand')
+            budget: budget,
+            use_case: useCase,
+            performance: performance,
+            screen_size: screenSize,
+            portability: portability,
+            brand: mappedBrand
         };
 
+        console.log('Submitting recommendation request:', data);
         showLoading(true);
-        
+
         try {
             const response = await fetch('/api/recommend', {
                 method: 'POST',
@@ -146,12 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const result = await response.json();
-            displayRecommendations(result.recommendations || []);
+            displayRecommendations(result.recommendations || [], data);
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {
             showLoading(false);
         }
+    });
+
+    startOverBtn.addEventListener('click', () => {
+        // Reset form
+        form.reset();
+        currentStep = 1;
+        updateWizard();
+        resultsSection.classList.add('hidden');
+        document.getElementById('wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     refreshBtn.addEventListener('click', async () => {
@@ -177,50 +227,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayRecommendations(recommendations) {
+    function displayRecommendations(recommendations, userPreferences) {
         container.innerHTML = '';
-        
+
         if (!recommendations || recommendations.length === 0) {
             container.innerHTML = '<p class="no-results">No matching laptops found. Try adjusting your budget or preferences.</p>';
         } else {
-            recommendations.forEach(laptop => {
-                const card = createLaptopCard(laptop);
+            recommendations.forEach((laptop, index) => {
+                const card = createLaptopCard(laptop, index + 1, recommendations.length);
                 container.appendChild(card);
             });
         }
-        
+
         resultsSection.classList.remove('hidden');
         resultsSection.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function createLaptopCard(laptop) {
+    function createLaptopCard(laptop, rank, totalRecommendations) {
         const card = document.createElement('div');
         card.className = 'laptop-card';
-        
+
         const imageUrl = laptop.image_url || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80';
-        
+
+        // Calculate a match score (1-100) based on rank
+        // Top recommendation gets higher score
+        const matchScore = Math.max(70, 100 - (rank - 1) * 10);
+
+        // Build specs grid
+        const specsHtml = `
+            <div class="spec-item">CPU: <strong>${laptop.cpu}</strong></div>
+            <div class="spec-item">GPU: <strong>${laptop.gpu}</strong></div>
+            <div class="spec-item">RAM: <strong>${laptop.ram}GB</strong></div>
+            <div class="spec-item">SSD: <strong>${laptop.storage}GB</strong></div>
+        `;
+
+        // Show compare button only if there are multiple recommendations
+        const compareBtn = totalRecommendations > 1 ? `<button type="button" class="compare-btn" data-model="${laptop.model}">Compare</button>` : '';
+
         card.innerHTML = `
-            <img src="${imageUrl}" alt="${laptop.model}" class="laptop-image" onerror="this.src='https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80'">
+            <div class="laptop-image-container">
+                <img src="${imageUrl}" alt="${laptop.model}" class="laptop-image" onerror="this.src='https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80'">
+                <div class="match-score">${matchScore}% Match</div>
+            </div>
             <div class="laptop-content">
                 <div class="laptop-brand">${laptop.brand}</div>
                 <div class="laptop-model">${laptop.model}</div>
                 <div class="ai-reasoning">
-                    <strong>AI Advice:</strong> ${laptop.reasoning || 'Highly recommended based on your specific needs and current market value.'}
+                    <strong>Why we picked this:</strong>
+                    ${laptop.reasoning || 'Highly recommended based on your specific needs and current market value.'}
                 </div>
                 <div class="laptop-specs">
-                    <div class="spec-item">CPU: <strong>${laptop.cpu}</strong></div>
-                    <div class="spec-item">GPU: <strong>${laptop.gpu}</strong></div>
-                    <div class="spec-item">RAM: <strong>${laptop.ram}GB</strong></div>
-                    <div class="spec-item">SSD: <strong>${laptop.storage}GB</strong></div>
-                    <div class="spec-item">Screen: <strong>${laptop.screen_size}"</strong></div>
+                    ${specsHtml}
                 </div>
                 <div class="laptop-footer">
                     <div class="laptop-price">${laptop.price_jod} JOD</div>
                     <a href="${laptop.purchase_url}" target="_blank" class="buy-btn">View Store</a>
+                    ${compareBtn}
                 </div>
             </div>
         `;
-        
+
+        // Store laptop data for compare functionality
+        card.dataset.laptop = JSON.stringify(laptop);
+
         return card;
     }
 });
