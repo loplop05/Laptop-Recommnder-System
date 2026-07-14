@@ -249,20 +249,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const imageUrl = laptop.image_url || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80';
 
-        // Calculate a match score (1-100) based on rank
-        // Top recommendation gets higher score
-        const matchScore = Math.max(70, 100 - (rank - 1) * 10);
+        // Use actual match score from API, fall back to rank-based
+        const matchScore = laptop.match_score || Math.max(70, 100 - (rank - 1) * 10);
+
+        // Storage: handle both old 'storage' and new 'storage_size' fields
+        const storageGB = laptop.storage || laptop.storage_size || 0;
+        const storageType = laptop.storage_type || 'SSD';
 
         // Build specs grid
         const specsHtml = `
-            <div class="spec-item">CPU: <strong>${laptop.cpu}</strong></div>
-            <div class="spec-item">GPU: <strong>${laptop.gpu}</strong></div>
-            <div class="spec-item">RAM: <strong>${laptop.ram}GB</strong></div>
-            <div class="spec-item">SSD: <strong>${laptop.storage}GB</strong></div>
+            <div class="spec-item">CPU: <strong>${laptop.cpu || 'N/A'}</strong></div>
+            <div class="spec-item">GPU: <strong>${laptop.gpu || 'N/A'}</strong></div>
+            <div class="spec-item">RAM: <strong>${laptop.ram || 'N/A'}GB</strong></div>
+            <div class="spec-item">${storageType}: <strong>${storageGB >= 1024 ? (storageGB / 1024) + 'TB' : storageGB + 'GB'}</strong></div>
         `;
+
+        // Build shop offers section
+        const shopOffers = laptop.shop_offers || [];
+        let shopsHtml = '';
+        if (shopOffers.length > 0) {
+            const offerCards = shopOffers.map(offer => {
+                const mapLink = offer.shop_map_url
+                    ? `<a href="${offer.shop_map_url}" target="_blank" class="shop-map-link" title="View on map">📍 Map</a>`
+                    : '';
+                const phoneLink = offer.shop_phone
+                    ? `<a href="tel:${offer.shop_phone}" class="shop-phone-link" title="Call shop">📞 ${offer.shop_phone}</a>`
+                    : '';
+                const locationText = offer.shop_location
+                    ? `<div class="shop-location">${offer.shop_location}</div>`
+                    : '';
+
+                return `
+                    <div class="shop-offer-card">
+                        <div class="shop-offer-header">
+                            <span class="shop-name">${offer.shop_name}</span>
+                            <span class="shop-price">${offer.price_jod} JOD</span>
+                        </div>
+                        ${locationText}
+                        <div class="shop-actions">
+                            <a href="${offer.product_url}" target="_blank" class="shop-visit-btn">Visit Store</a>
+                            ${mapLink}
+                            ${phoneLink}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            shopsHtml = `
+                <div class="shop-offers-section">
+                    <div class="shop-offers-title">🏪 Available at ${shopOffers.length} shop${shopOffers.length > 1 ? 's' : ''}</div>
+                    <div class="shop-offers-list">
+                        ${offerCards}
+                    </div>
+                </div>
+            `;
+        }
 
         // Show compare button only if there are multiple recommendations
         const compareBtn = totalRecommendations > 1 ? `<button type="button" class="compare-btn" data-model="${laptop.model}">Compare</button>` : '';
+
+        // Best price from first offer or direct price
+        const bestPrice = laptop.price_jod || (shopOffers.length > 0 ? shopOffers[0].price_jod : 0);
+        const bestUrl = laptop.purchase_url || (shopOffers.length > 0 ? shopOffers[0].product_url : '#');
 
         card.innerHTML = `
             <div class="laptop-image-container">
@@ -279,9 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="laptop-specs">
                     ${specsHtml}
                 </div>
+                ${shopsHtml}
                 <div class="laptop-footer">
-                    <div class="laptop-price">${laptop.price_jod} JOD</div>
-                    <a href="${laptop.purchase_url}" target="_blank" class="buy-btn">View Store</a>
+                    <div class="laptop-price">${bestPrice} JOD</div>
+                    <a href="${bestUrl}" target="_blank" class="buy-btn">Best Deal</a>
                     ${compareBtn}
                 </div>
             </div>

@@ -874,3 +874,113 @@ footer {
 .btn-secondary:active {
   transform: scale(0.98);
 }
+
+/* ─── Shop Offers Section ─────────────────────────────────────────────────── */
+.shop-offers-section {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.shop-offers-title {
+  background: #f0f1ff;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--primary-dark);
+  border-bottom: 1px solid var(--border);
+}
+
+.shop-offers-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-offer-card {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.shop-offer-card:last-child {
+  border-bottom: none;
+}
+
+.shop-offer-card:hover {
+  background: var(--primary-light);
+}
+
+.shop-offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.shop-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.shop-price {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+
+.shop-location {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0.4rem;
+}
+
+.shop-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.shop-visit-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.35rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: background 0.15s ease;
+}
+
+.shop-visit-btn:hover {
+  background: var(--primary-dark);
+}
+
+.shop-map-link,
+.shop-phone-link {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.shop-map-link:hover,
+.shop-phone-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .shop-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shop-visit-btn {
+    text-align: center;
+  }
+}

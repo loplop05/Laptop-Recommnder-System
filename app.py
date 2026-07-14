@@ -108,13 +108,25 @@ def index():
 @app.route('/api/laptops', methods=['GET'])
 @rate_limited
 def get_laptops():
-    """Return the current laptop database (specs only, no internal ids)."""
-    from data_fetcher import load_laptops
-    laptops = load_laptops()
+    """Return the current laptop database from SQLite (specs + shop offers)."""
+    from db_schema import get_connection, get_laptops_with_best_price, DB_PATH
+    import os as _os
+    if not _os.path.exists(DB_PATH):
+        # Auto-seed on first access
+        from db_schema import seed_from_json
+        cache = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'laptops_cache.json')
+        if _os.path.exists(cache):
+            seed_from_json(cache)
+    conn = get_connection()
+    try:
+        laptops = get_laptops_with_best_price(conn)
+    finally:
+        conn.close()
     # Return safe subset of fields
-    safe_fields = ['brand', 'model', 'cpu', 'gpu', 'ram', 'storage',
+    safe_fields = ['brand', 'model', 'cpu', 'gpu', 'ram', 'storage_size',
                    'screen_size', 'price_jod', 'use_cases',
-                   'performance_level', 'portability', 'image_url', 'purchase_url']
+                   'performance_level', 'portability', 'image_url',
+                   'shop_offers']
     result = [{k: lap[k] for k in safe_fields if k in lap} for lap in laptops]
     return jsonify({'laptops': result, 'count': len(result)})
 
@@ -202,14 +214,14 @@ def recommend():
 @rate_limited
 def refresh_prices():
     """
-    Trigger a background scrape of JOD prices from Jordanian retailers.
-    Falls back silently to local cache if scraping fails.
+    Trigger a scrape of JOD prices from Jordanian retailers into the SQLite DB.
+    Falls back silently to cached data if scraping fails.
     """
     try:
-        from data_fetcher import scrape_all_shops
-        success, count = scrape_all_shops()
-        if success:
-            return jsonify({'message': f'Prices refreshed. {count} laptop(s) updated across all shops.', 'updated': count})
+        from refresh_data import scrape_all_shops
+        count = scrape_all_shops()
+        if count > 0:
+            return jsonify({'message': f'Prices refreshed. {count} offer(s) updated across all shops.', 'updated': count})
         else:
             return jsonify({'message': 'Prices are up to date (no changes from online sources).', 'updated': 0})
     except Exception as e:
