@@ -7,9 +7,7 @@ logging.basicConfig(level=logging.INFO)
 def test_pipeline():
     print("--- Testing ML Pipeline ---")
     pipeline = LaptopRecommenderPipeline()
-    pipeline.train_and_evaluate_models()
-    print(f"Model Accuracies: {pipeline.model_accuracies}")
-    
+
     # Test a single recommendation
     pref = {
         "budget": 800,
@@ -20,6 +18,7 @@ def test_pipeline():
         "brand": "Any"
     }
     recommendations = pipeline.get_recommendations(pref)
+    assert recommendations["winning_model"] == "hard_filter_weighted_score"
     print(f"Recommendations for gaming (800 JOD): {len(recommendations.get('recommendations', []))} laptops found.")
     if recommendations.get('recommendations'):
         top = recommendations['recommendations'][0]
