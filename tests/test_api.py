@@ -119,10 +119,10 @@ def test_recommendation_successful(mock_create, client):
     assert "winning_model" in data
     assert len(data["recommendations"]) == 1
 
-@patch('data_fetcher.scrape_all_shops')
+@patch('refresh_data.scrape_all_shops')
 def test_refresh_prices_api(mock_scrape, client):
     """Test refresh prices API route behavior."""
-    mock_scrape.return_value = (True, 5)
+    mock_scrape.return_value = 5
     res = client.post('/api/refresh-prices')
     assert res.status_code == 200
     data = json.loads(res.data)
