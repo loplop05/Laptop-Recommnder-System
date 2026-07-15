@@ -3,10 +3,9 @@ import json
 import logging
 import secrets
 from functools import wraps
-# pyrefly: ignore [missing-import]
 from flask import Flask, render_template, jsonify, request, abort
-
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Configure logging — do NOT log sensitive user data
@@ -105,20 +104,6 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route('/api/laptops', methods=['GET'])
-@rate_limited
-def get_laptops():
-    """Return the current laptop database (specs only, no internal ids)."""
-    from data_fetcher import load_laptops
-    laptops = load_laptops()
-    # Return safe subset of fields
-    safe_fields = ['brand', 'model', 'cpu', 'gpu', 'ram', 'storage',
-                   'screen_size', 'price_jod', 'use_cases',
-                   'performance_level', 'portability', 'image_url', 'purchase_url']
-    result = [{k: lap[k] for k in safe_fields if k in lap} for lap in laptops]
-    return jsonify({'laptops': result, 'count': len(result)})
-
-
 @app.route('/api/recommend', methods=['POST'])
 @rate_limited
 def recommend():
@@ -202,19 +187,16 @@ def recommend():
 @rate_limited
 def refresh_prices():
     """
-    Trigger a background scrape of JOD prices from Jordanian retailers.
+    Trigger a background ETL process to refresh laptop data from Jordanian retailers.
     Falls back silently to local cache if scraping fails.
     """
     try:
-        from data_fetcher import scrape_all_shops
-        success, count = scrape_all_shops()
-        if success:
-            return jsonify({'message': f'Prices refreshed. {count} laptop(s) updated across all shops.', 'updated': count})
-        else:
-            return jsonify({'message': 'Prices are up to date (no changes from online sources).', 'updated': 0})
+        from refresh_data import etl_process
+        etl_process()
+        return jsonify({'message': 'Data refresh completed successfully.', 'updated': True})
     except Exception as e:
-        logging.error(f"Price refresh error: {e}")
-        return jsonify({'message': 'Could not refresh prices. Using cached data.', 'updated': 0}), 200
+        logging.error(f"Data refresh error: {e}")
+        return jsonify({'message': 'Could not refresh data. Using cached data.', 'updated': False}), 200
 
 
 # ─── Entry point ─────────────────────────────────────────────────────────────

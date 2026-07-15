@@ -1,47 +1,14 @@
-from asyncio import transports
 import re
 import json
 import logging
 import requests
 import os
+from datetime import datetime
 
-# pyrefly: ignore [missing-import]
-from bs4 import  BeautifulSoup   
-
+from bs4 import BeautifulSoup
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-CACHE_FILE = 'laptops_cache.json'
-ACTIVE_FILE = 'laptops_active.json'
-
-def load_laptops():     
-    """
-    Load laptops from active file, or fallback to the pristine cache.
-    """
-    target = ACTIVE_FILE if os.path.exists(ACTIVE_FILE) else CACHE_FILE
-    try:
-        with open(target, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        logging.error(f"Error loading laptops from {target}: {e}")
-        # Final fallback to pristine cache if active is corrupted
-        if target == ACTIVE_FILE:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        return []
-
-def save_laptops(laptops):
-    """
-    Save the laptop database to active file.
-    """
-    try:
-        with open(ACTIVE_FILE, 'w', encoding='utf-8') as f:
-            json.dump(laptops, f, indent=2, ensure_ascii=False)
-        return True
-    except Exception as e:
-        logging.error(f"Error saving laptops to {ACTIVE_FILE}: {e}")
-        return False
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def clean_price(price_str):
     """
@@ -50,7 +17,7 @@ def clean_price(price_str):
     if not price_str:
         return None
     # Remove commas
-    price_str = price_str.replace(',', '')
+    price_str = price_str.replace(",", "")
     # Find all decimal/integer numbers
     matches = re.findall(r'\d+(?:\.\d+)?', price_str)
     if matches:
@@ -62,78 +29,16 @@ def clean_price(price_str):
             return None
     return None
 
-def match_laptop(scraped_title, scraped_price, scraped_link, scraped_img, laptops):
-    """
-    Matches a scraped product title and price with our curated laptops database.
-    Uses keyword tokens to determine the best fit.
-    """
-    title_lower = scraped_title.lower()
-    best_match = None
-    best_score = 0
-    
-    for laptop in laptops:
-        brand = laptop['brand'].lower()
-        model = laptop['model'].lower()
-        
-        # Brand must match
-        if brand not in title_lower:
-            continue
-            
-        score = 0
-        
-        # Check model keyword matches
-        model_words = model.split()
-        for word in model_words:
-            if len(word) > 2 and word in title_lower:
-                score += 2
-                
-        # Check CPU specs (e.g., i5, i7, i9, r7, r9, m2, m3)
-        cpu_lower = laptop['cpu'].lower()
-        cpu_keywords = ['i5', 'i7', 'i9', 'ryzen 5', 'ryzen 7', 'ryzen 9', 'm1', 'm2', 'm3', 'ultra 7', 'ultra 9']
-        for kw in cpu_keywords:
-            if kw in cpu_lower and kw in title_lower:
-                score += 3
-        
-        # Check GPU keywords
-        gpu_lower = laptop['gpu'].lower()
-        if 'rtx 4060' in gpu_lower and '4060' in title_lower:
-            score += 4
-        elif 'rtx 4070' in gpu_lower and '4070' in title_lower:
-            score += 4
-        elif 'rtx 4080' in gpu_lower and '4080' in title_lower:
-            score += 4
-        elif 'rtx 3050' in gpu_lower and '3050' in title_lower:
-            score += 4
-        elif 'iris' in gpu_lower and ('iris' in title_lower or 'intel graphics' in title_lower or 'integrated' in title_lower):
-            score += 2
-            
-        # Check RAM size
-        ram_str = f"{laptop['ram']} GB"
-        ram_alt = f"{laptop['ram']}GB"
-        if ram_str in title_lower or ram_alt in title_lower:
-            score += 3
-            
-        # Threshold for a good match
-        if score > best_score and score >= 5:
-            best_score = score
-            best_match = laptop
-
-    return best_match
-
-def scrape_generic(url_template, product_selector, title_selector, price_selector, link_selector, img_selector, pages=2):
+def scrape_generic(url_template, product_selector, title_selector, price_selector, link_selector, img_selector, shop_id, pages=2):
     """
     Generic scraper for WooCommerce/OpenCart based Jordanian shops.
+    Returns a list of dictionaries with scraped laptop data.
     """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
     
-    laptops = load_laptops()
-    if not laptops:
-        return False, 0
-        
-    updated_count = 0
-    matched_ids = set()
+    scraped_laptops_data = []
     
     for page in range(1, pages + 1):
         url = url_template.format(page=page)
@@ -161,7 +66,11 @@ def scrape_generic(url_template, product_selector, title_selector, price_selecto
                 title = title_elem.text.strip()
                 price = clean_price(price_elem.text.strip())
                 
-                if not price or price < 100:
+                if not price or price < 300: # Increase minimum price to filter out accessories
+                    continue
+                
+                # Basic check to ensure it's a laptop
+                if not any(kw in title.lower() for kw in ["laptop", "notebook", "zenbook", "vivobook", "thinkpad", "ideapad", "predator", "helios", "nitro", "legion", "macbook", "proart", "rog", "tuf", "victus", "gaming"]):
                     continue
                     
                 link_elem = product.select_one(link_selector)
@@ -174,62 +83,30 @@ def scrape_generic(url_template, product_selector, title_selector, price_selecto
                     if img and ',' in img: # Handle srcset
                         img = img.split(',')[0].split(' ')[0]
                 
-                matched = match_laptop(title, price, link, img, laptops)
-                if matched and matched['id'] not in matched_ids:
-                    matched['price_jod'] = price
-                    if link and 'product-category' not in link and 'search' not in link:
-                        matched['purchase_url'] = link
-                    if img and (not matched.get('image_url') or 'unsplash' not in matched['image_url']):
-                        matched['image_url'] = img
-                        
-                    matched_ids.add(matched['id'])
-                    updated_count += 1
-                    logging.info(f"Updated {matched['brand']} {matched['model']} from {url.split('/')[2]}: {price} JOD")
+                # For now, just return the raw scraped data. Matching and deduplication will happen in ETL.
+                scraped_laptops_data.append({
+                    "title": title,
+                    "price_jod": price,
+                    "purchase_url": link,
+                    "image_url": img,
+                    "shop_id": shop_id,
+                    "last_scraped": datetime.now().isoformat()
+                })
                     
         except Exception as e:
             logging.error(f"Error scraping {url}: {e}")
             
-            
-    if updated_count > 0:
-        save_laptops(laptops)
-        return True, updated_count
-    return False, 0
+    return scraped_laptops_data
 
-def scrape_all_shops():
-    """
-    Run scrapers for all supported shops.
-    """
-    shops = [
-        {
-            "name": "PC Circle",
-            "url": "https://pccircle.com/product-category/laptops/page/{page}/",
-            "p": "li.product", "t": ".woocommerce-loop-product__title", "pr": ".price", "l": "a", "i": "img"
-        },
-        {
-            "name": "City Center",
-            "url": "https://citycenter.jo/index.php?route=product/search&search=laptop&page={page}",
-            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
-        },
-        
-        {
-            "name": "GTS",
-            "url": "https://gts.jo/en/laptops-tablets/laptops/laptop-notebooks?page={page}",
-            "p": ".product-layout", "t": "h4 a", "pr": ".price", "l": "h4 a", "i": ".image img"
-        }
-    ]
-    
-    
-    total_updated = 0
-    for shop in shops:
-        success, count = scrape_generic(shop["url"], shop["p"], shop["t"], shop["pr"], shop["l"], shop["i"])
-        if success:
-            total_updated += count
-            logging.info(f"Shop {shop['name']} update successful: {count} laptops.")
-            
-    return total_updated > 0, total_updated
+# These functions are no longer needed as data will be loaded from SQLite
+def load_laptops_from_json():
+    return []
 
-if __name__ == '__main__':
-    logging.info("Running multi-shop scrape test...")
-    success, count = scrape_all_shops()
-    logging.info(f"Scrape completed. Success: {success}, Total Updated: {count} laptops.")
-    
+def save_laptops_to_json(laptops):
+    return False
+
+# The main execution block for testing scraping is removed as it will be handled by refresh_data.py
+# if __name__ == '__main__':
+#     logging.info("Running multi-shop scrape test...")
+#     success, count = scrape_all_shops()
+#     logging.info(f"Scrape completed. Success: {success}, Total Updated: {count} laptops.")

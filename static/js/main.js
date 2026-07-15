@@ -258,8 +258,25 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="spec-item">CPU: <strong>${laptop.cpu}</strong></div>
             <div class="spec-item">GPU: <strong>${laptop.gpu}</strong></div>
             <div class="spec-item">RAM: <strong>${laptop.ram}GB</strong></div>
-            <div class="spec-item">SSD: <strong>${laptop.storage}GB</strong></div>
+            <div class="spec-item">SSD: <strong>${laptop.storage_size}GB</strong></div>
         `;
+
+        // Build shop offers section
+        let offersHtml = '';
+        if (laptop.offers && laptop.offers.length > 0) {
+            offersHtml = '<div class="shop-offers"><h4>Available at:</h4>';
+            laptop.offers.forEach(offer => {
+                offersHtml += `
+                    <div class="shop-card">
+                        <div class="shop-name">${offer.shop_name}</div>
+                        <div class="shop-price">${offer.price_jod} JOD</div>
+                        <div class="shop-location">${offer.shop_location}</div>
+                        <a href="${offer.product_url}" target="_blank" class="shop-link">View</a>
+                    </div>
+                `;
+            });
+            offersHtml += '</div>';
+        }
 
         // Show compare button only if there are multiple recommendations
         const compareBtn = totalRecommendations > 1 ? `<button type="button" class="compare-btn" data-model="${laptop.model}">Compare</button>` : '';
@@ -279,9 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="laptop-specs">
                     ${specsHtml}
                 </div>
+                ${offersHtml}
                 <div class="laptop-footer">
-                    <div class="laptop-price">${laptop.price_jod} JOD</div>
-                    <a href="${laptop.purchase_url}" target="_blank" class="buy-btn">View Store</a>
                     ${compareBtn}
                 </div>
             </div>
