@@ -2,7 +2,7 @@ import logging
 from unittest.mock import patch
 
 from ml_pipeline import LaptopRecommenderPipeline
-from data_fetcher import scrape_all_shops
+from refresh_data import scrape_all_shops
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,9 +24,8 @@ def test_pipeline():
 @patch('test_backend.scrape_all_shops')
 def test_scraper(mock_scrape_all_shops):
     """Scraper test should not rely on external network availability."""
-    mock_scrape_all_shops.return_value = (True, 3)
-    success, count = scrape_all_shops()
-    assert success is True
+    mock_scrape_all_shops.return_value = 3
+    count = scrape_all_shops()
     assert count == 3
 
 if __name__ == "__main__":
