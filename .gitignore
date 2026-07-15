@@ -1,6 +1,15 @@
 # Environment — NEVER commit secrets
 .env
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache files
+laptops_cache.json
+laptops_active.json
+
 # Python
 __pycache__/
 *.py[cod]
