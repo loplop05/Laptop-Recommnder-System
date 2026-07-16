@@ -315,9 +315,14 @@ document.addEventListener('DOMContentLoaded', () => {
         card.innerHTML = `
             <div class="laptop-image-container">
                 <img src="${imageUrl}" alt="${laptop.model}" class="laptop-image" onerror="this.src='https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80'">
-                <div class="match-score">${matchScore}% Match</div>
             </div>
             <div class="laptop-content">
+                <div class="match-score-container">
+                    <div class="match-score-label">${matchScore}% Compatibility</div>
+                    <div class="match-score-bar-bg">
+                        <div class="match-score-bar" style="width: ${matchScore}%;"></div>
+                    </div>
+                </div>
                 <div class="laptop-brand">${laptop.brand}</div>
                 <div class="laptop-model">${laptop.model}</div>
                 <div class="ai-reasoning">
