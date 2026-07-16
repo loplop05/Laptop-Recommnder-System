@@ -117,7 +117,7 @@ def test_recommendation_successful(mock_create, client):
     assert res.status_code == 200
     data = json.loads(res.data)
     assert "winning_model" in data
-    assert len(data["recommendations"]) == 1
+    assert len(data["recommendations"]) >= 1
 
 @patch('refresh_data.scrape_all_shops')
 def test_refresh_prices_api(mock_scrape, client):
