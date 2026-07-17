@@ -704,4 +704,5 @@ input[type="number"]:focus {
     transition: all 0.2s ease;
     color: var(--text);
   }
+    
 }
