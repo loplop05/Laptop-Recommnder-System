@@ -63,49 +63,60 @@ document.addEventListener('DOMContentLoaded', () => {
         7: "Any brand preferences? (Optional)"
     };
 
+    const stepNextButtonText = {
+        1: "Continue to Performance",
+        2: "Continue to Display",
+        3: "Continue to Storage",
+        4: "Continue to Features",
+        5: "Continue to Budget",
+        6: "Review Recommendations",
+        7: "Generating..."
+    };
+
     function updateWizard() {
         console.log('Updating wizard to step:', currentStep);
+        
+        // Update sidebar subtitle
+        const subtitle = document.querySelector('.sidebar-subtitle');
+        if (subtitle) subtitle.textContent = `Step ${currentStep} of ${totalSteps}`;
+
+        // Update main content titles
+        const titleEl = document.getElementById('step-title');
+        const subtitleEl = document.getElementById('step-subtitle');
+        if (titleEl) titleEl.textContent = stepTitles[currentStep];
+        if (subtitleEl) subtitleEl.textContent = stepSubtitles[currentStep];
+
+        // Update steps visibility
         steps.forEach(s => s.classList.remove('active'));
         const activeStep = document.querySelector(`.step[data-step="${currentStep}"]`);
         if (activeStep) {
             activeStep.classList.add('active');
         }
 
-        // Update Header Titles
-        document.querySelector('header h1').textContent = stepTitles[currentStep];
-        document.querySelector('header p').textContent = stepSubtitles[currentStep];
-
-        // Update Nav Steps
+        // Update sidebar nav items
         document.querySelectorAll('.nav-step').forEach((s, idx) => {
-            if (idx + 1 <= currentStep) {
+            if (idx + 1 === currentStep) {
                 s.classList.add('active');
             } else {
                 s.classList.remove('active');
             }
         });
 
-        // Update progress bar
-        const progressPercent = (currentStep / totalSteps) * 100;
-        progressBar.style.width = `${progressPercent}%`;
-        stepCount.textContent = `Step ${currentStep} of ${totalSteps}`;
-
-        // Update button visibility
-        if (currentStep === 1) {
-            prevBtn.classList.add('hidden');
-        } else {
-            prevBtn.classList.remove('hidden');
+        // Update button text
+        if (nextBtn) {
+            nextBtn.innerHTML = `${stepNextButtonText[currentStep]} <span class="arrow">→</span>`;
         }
 
         if (currentStep === totalSteps) {
-            nextBtn.classList.add('hidden');
-            submitBtn.classList.remove('hidden');
+            if (nextBtn) nextBtn.classList.add('hidden');
+            if (submitBtn) submitBtn.classList.remove('hidden');
         } else {
-            nextBtn.classList.remove('hidden');
-            submitBtn.classList.add('hidden');
+            if (nextBtn) nextBtn.classList.remove('hidden');
+            if (submitBtn) submitBtn.classList.add('hidden');
         }
 
-        // Scroll to wizard
-        document.getElementById('wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Scroll to top of wizard
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Auto-advance on card selection for certain steps
