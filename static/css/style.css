@@ -7,25 +7,25 @@
   --secondary: #5E6ED5;
   --tertiary: #AB57AC;
   --slate: #6F749E;
-  
+
   --bg-canvas: #f7f5ff;
   --surface: #ffffff;
   --text: #262c51;
   --text-muted: #6F749E;
-  
+
   --border: #d8daff;
-  
+
   /* Spacing */
   --space-base: 4px;
   --stack-sm: 8px;
   --stack-md: 16px;
   --stack-lg: 32px;
-  
+
   /* Radii */
   --radius-sm: 4px;
   --radius: 8px;
   --radius-lg: 16px;
-  
+
   /* Shadows */
   --shadow-level-2: 0 8px 30px rgba(38, 44, 81, 0.08);
 }
@@ -132,8 +132,15 @@ main {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .step h2 {
@@ -178,7 +185,7 @@ main {
   background: var(--surface);
 }
 
-.option-card input:checked + .card-content {
+.option-card input:checked+.card-content {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(0, 110, 255, 0.1);
   background: rgba(0, 110, 255, 0.02);
@@ -310,7 +317,8 @@ main {
   color: var(--text);
 }
 
-.chip-option input:checked + .chip-label {
+
+.chip-option input:checked+.chip-label {
   border-color: var(--primary);
   background: var(--primary);
   color: white;
@@ -412,11 +420,15 @@ main {
 }
 
 @media (max-width: 1024px) {
-  .laptop-card { grid-column: span 6; }
+  .laptop-card {
+    grid-column: span 6;
+  }
 }
 
 @media (max-width: 768px) {
-  .laptop-card { grid-column: span 12; }
+  .laptop-card {
+    grid-column: span 12;
+  }
 }
 
 .laptop-image-container {
@@ -483,7 +495,8 @@ main {
 }
 
 .ai-reasoning {
-  background: rgba(171, 87, 172, 0.05); /* Orchid tint */
+  background: rgba(171, 87, 172, 0.05);
+  /* Orchid tint */
   padding: var(--stack-md);
   border-radius: var(--radius);
   border-left: 4px solid var(--tertiary);
@@ -548,7 +561,8 @@ main {
 }
 
 .shop-offer-card:nth-child(even) {
-  background: rgba(0, 110, 255, 0.02); /* subtle surface tint */
+  background: rgba(0, 110, 255, 0.02);
+  /* subtle surface tint */
 }
 
 .shop-offer-card:last-child {
@@ -624,7 +638,9 @@ main {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 footer {
@@ -645,7 +661,9 @@ footer {
 }
 
 /* Input Fields */
-input[type="text"], input[type="email"], input[type="number"] {
+input[type="text"],
+input[type="email"],
+input[type="number"] {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--stack-sm) var(--stack-md);
@@ -655,7 +673,9 @@ input[type="text"], input[type="email"], input[type="number"] {
   width: 100%;
 }
 
-input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(0, 110, 255, 0.1);
@@ -665,10 +685,23 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus 
 @media (max-width: 768px) {
   .container {
     padding: 20px;
-    display: block; /* Switch to fluid single-column model */
+    display: block;
+    /* Switch to fluid single-column model */
   }
-  
+
   .wizard-card {
     padding: var(--stack-md);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .option-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    color: var(--text);
   }
 }
