@@ -43,6 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateWizard();
 
+    const stepTitles = {
+        1: "Step 1: Choose Your Use Case",
+        2: "Step 2: Set Your Budget",
+        3: "Step 3: Choose Your Display",
+        4: "Step 4: Set Your Portability",
+        5: "Step 5: Choose Your Features",
+        6: "Step 6: OS Preference",
+        7: "Step 7: Final Brand Selection"
+    };
+
+    const stepSubtitles = {
+        1: "Select the primary way you'll use your new laptop for the best recommendations in Jordan.",
+        2: "Find the best performance within your range.",
+        3: "What screen size do you prefer?",
+        4: "How important is portability?",
+        5: "How much power do you need?",
+        6: "Do you have an OS preference?",
+        7: "Any brand preferences? (Optional)"
+    };
+
     function updateWizard() {
         console.log('Updating wizard to step:', currentStep);
         steps.forEach(s => s.classList.remove('active'));
@@ -50,6 +70,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeStep) {
             activeStep.classList.add('active');
         }
+
+        // Update Header Titles
+        document.querySelector('header h1').textContent = stepTitles[currentStep];
+        document.querySelector('header p').textContent = stepSubtitles[currentStep];
+
+        // Update Nav Steps
+        document.querySelectorAll('.nav-step').forEach((s, idx) => {
+            if (idx + 1 <= currentStep) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
 
         // Update progress bar
         const progressPercent = (currentStep / totalSteps) * 100;
@@ -342,12 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${imageUrl}" alt="${laptop.model}" class="laptop-image" onerror="this.src='https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80'">
             </div>
             <div class="laptop-content">
-                <div class="match-score-container">
-                    <div class="match-score-label">${matchScore}% Compatibility</div>
-                    <div class="match-score-bar-bg">
-                        <div class="match-score-bar" style="width: ${matchScore}%;"></div>
-                    </div>
-                </div>
+                <div class="match-score-badge">${matchScore}% Compatibility</div>
                 <div class="laptop-brand">${laptop.brand}</div>
                 <div class="laptop-model">${laptop.model}</div>
                 <div class="ai-reasoning">

@@ -1,352 +1,415 @@
 /* 
-   Stitch-Inspired Theme for AI Laptop Advisor 
-   Primary Colors: 
-   - Electric Petra Blue: #00A3FF (Approximation)
-   - Copper Sand Gold: #D4A017 (Approximation)
-   - Background Canvas: #191A1F (Dark Theme)
-   - Surface: #282A2C
-   - Border: #404040
+   Refined Google Stitch Design for AI Laptop Advisor
+   Light Theme with Jordanian-inspired patterns
 */
 
 :root {
-  --primary: #00A3FF; /* Electric Petra Blue */
-  --primary-hover: #33B5FF;
-  --secondary: #D4A017; /* Copper Sand Gold */
-  --secondary-hover: #E5B128;
-  --bg-canvas: #191A1F;
-  --surface: #282A2C;
-  --surface-hover: #323437;
-  --text: #FFFFFF;
-  --text-muted: #ACACAC;
-  --border: #404040;
-  --radius-lg: 24px;
-  --radius-md: 16px;
+  --primary: #006EFF; /* Deep Blue */
+  --secondary: #B8860B; /* Dark Goldenrod */
+  --bg-canvas: #F5F5F0; /* Off-white canvas */
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-muted: #666666;
+  --border: #E0E0E0;
+  --radius-lg: 16px;
+  --radius-md: 12px;
   --radius-sm: 8px;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --glass: rgba(255, 255, 255, 0.05);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --pattern-color: rgba(0, 0, 0, 0.03);
 }
 
 body {
   background-color: var(--bg-canvas);
   color: var(--text);
-  background-image: radial-gradient(circle at 50% 0%, rgba(0, 163, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 100% 100%, rgba(212, 160, 23, 0.1) 0%, transparent 50%);
+  /* Jordanian-inspired geometric pattern background */
+  background-image: 
+    linear-gradient(30deg, var(--pattern-color) 12%, transparent 12.5%, transparent 87%, var(--pattern-color) 87.5%, var(--pattern-color)),
+    linear-gradient(150deg, var(--pattern-color) 12%, transparent 12.5%, transparent 87%, var(--pattern-color) 87.5%, var(--pattern-color)),
+    linear-gradient(30deg, var(--pattern-color) 12%, transparent 12.5%, transparent 87%, var(--pattern-color) 87.5%, var(--pattern-color)),
+    linear-gradient(150deg, var(--pattern-color) 12%, transparent 12.5%, transparent 87%, var(--pattern-color) 87.5%, var(--pattern-color)),
+    linear-gradient(60deg, var(--pattern-color) 25%, transparent 25.5%, transparent 75%, var(--pattern-color) 75.5%, var(--pattern-color)),
+    linear-gradient(60deg, var(--pattern-color) 25%, transparent 25.5%, transparent 75%, var(--pattern-color) 75.5%, var(--pattern-color));
+  background-size: 80px 140px;
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
   background-attachment: fixed;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.wizard-card, .laptop-card, .loading-overlay {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Multi-step navigation header */
+.nav-steps {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.nav-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.nav-step.active {
+  opacity: 1;
+}
+
+.nav-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.nav-step-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Wizard Card */
+.wizard-card {
   background: var(--surface);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  padding: 40px;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.wizard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+/* Option Cards */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
 }
 
 .option-card .card-content {
-  background: var(--glass);
+  background: #F9F9F7;
   border: 1px solid var(--border);
-  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: left;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .option-card input:checked + .card-content {
   border-color: var(--primary);
-  background: rgba(0, 163, 255, 0.1);
-  box-shadow: 0 0 20px rgba(0, 163, 255, 0.2);
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(0, 110, 255, 0.1);
+  transform: translateY(-4px);
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), #0077FF);
-  border-radius: var(--radius-md);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.option-card .icon {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.option-card h3 {
+  font-size: 1.25rem;
   font-weight: 700;
-}
-
-.btn-secondary {
-  border-color: var(--border);
-  color: var(--text);
-  background: var(--glass);
-}
-
-.progress {
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-}
-
-/* Digital Lattice Animation for Loader */
-.loader-content .spinner {
-  border-top-color: var(--primary);
-  border-right-color: var(--secondary);
-  width: 80px;
-  height: 80px;
-  border-width: 4px;
-}
-
-.loading-overlay h3 {
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* Overrides for existing styles */
-header h1 {
-  font-size: 3.5rem;
-  background: linear-gradient(to right, #fff, var(--primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.highlight {
-  color: var(--secondary);
-  -webkit-text-fill-color: var(--secondary);
-}
-
-.logo {
-  font-family: 'Monaco', 'Consolas', monospace;
-  background: var(--glass);
-  padding: 4px 12px;
-  border-radius: 4px;
-  display: inline-block;
-  border: 1px solid var(--border);
-  color: var(--primary) !important;
-}
-
-.wizard-card {
-  padding: 48px;
-}
-
-.step h2 {
-  font-weight: 800;
-  letter-spacing: -1px;
-}
-
-.card-content h3 {
   color: var(--primary);
 }
 
-.card-content p {
-  color: var(--text-muted);
-}
-
-.laptop-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.laptop-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 163, 255, 0.15);
-  border-color: var(--primary);
-}
-
-.ai-reasoning {
-  background: rgba(212, 160, 23, 0.1) !important;
-  border-left: 4px solid var(--secondary);
-  color: #fff !important;
-}
-
-.match-score-label {
-  color: var(--secondary) !important;
-}
-
-.match-score-bar {
-  background: linear-gradient(90deg, var(--secondary), var(--primary)) !important;
-}
-
-.laptop-price {
-  color: var(--primary) !important;
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-
-.buy-btn {
-  background: var(--primary) !important;
-  border-radius: var(--radius-sm) !important;
-}
-
-footer {
-  color: var(--text-muted);
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-  margin-top: 64px;
-}
-
-#refresh-prices-btn {
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-#refresh-prices-btn:hover {
-  background: var(--primary);
-  color: #fff;
-}
-
-/* Digital Lattice Animation */
-.digital-lattice {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 24px;
-}
-
-.node {
-  width: 25px;
-  height: 25px;
-  background: var(--primary);
-  border-radius: 4px;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-.node:nth-child(2) {
-  background: var(--secondary);
-  animation-delay: 0.2s;
-}
-
-.node:nth-child(3) {
-  background: var(--secondary);
-  animation-delay: 0.4s;
-}
-
-.node:nth-child(4) {
-  background: var(--primary);
-  animation-delay: 0.6s;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.5; box-shadow: 0 0 15px var(--primary); }
-}
-
-.status-update {
-  font-family: monospace;
-  color: var(--secondary);
-  margin-bottom: 16px;
+.option-card p {
   font-size: 0.9rem;
-  height: 1.2em;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
-/* Refined Stitch Design Elements */
-
-/* Chip styles for brand selection */
-.chip-label {
-  background: var(--glass) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  transition: all 0.3s ease;
+/* Budget Slider */
+.budget-container {
+  background: #F9F9F7;
+  border-radius: var(--radius-md);
+  padding: 40px;
+  margin-top: 30px;
+  text-align: center;
 }
 
-.chip-option input:checked + .chip-label {
-  background: linear-gradient(135deg, var(--primary), #0077FF) !important;
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 20px rgba(0, 163, 255, 0.3);
-}
-
-/* Budget slider styling */
 .budget-slider {
-  background: var(--border);
+  width: 100%;
+  max-width: 500px;
+  height: 6px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
 }
 
 .budget-slider::-webkit-slider-thumb {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  box-shadow: 0 0 15px rgba(0, 163, 255, 0.3);
-}
-
-.budget-slider::-moz-range-thumb {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #FFFFFF;
+  border: 4px solid var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 #budget-output {
-  color: var(--secondary);
-}
-
-/* Results section styling */
-.results-header {
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 32px;
-  margin-bottom: 32px;
-}
-
-.results-header h2 {
-  background: linear-gradient(to right, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 20px 0;
 }
 
-.model-info {
-  color: var(--text-muted);
-  font-style: italic;
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 110, 255, 0.3);
 }
 
-/* Shop offers styling */
-.shop-offers-section {
-  background: rgba(212, 160, 23, 0.05);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  margin-top: 16px;
-}
-
-.shop-offer-card {
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  margin-bottom: 8px;
-}
-
-.shop-visit-btn {
-  background: var(--primary) !important;
-  color: #fff !important;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  display: inline-block;
-  transition: all 0.2s;
-}
-
-.shop-visit-btn:hover {
-  background: var(--primary-hover) !important;
+.btn-primary:hover {
+  background: #0056CC;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 110, 255, 0.4);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  header h1 {
-    font-size: 2rem;
-  }
-
-  .wizard-card {
-    padding: 24px;
-  }
-
-  .laptop-card {
-    grid-column: span 12 !important;
-  }
-
-  .options-grid {
-    grid-template-columns: 1fr;
-  }
+.btn-secondary {
+  background: #E0E0E0;
+  color: var(--text);
+  padding: 14px 32px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-/* Accessibility improvements */
-.btn-primary:focus,
-.btn-secondary:focus,
-.option-card:focus-within .card-content {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+/* Loading Overlay */
+.loading-overlay {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
 }
 
-/* No results state */
-.no-results {
-  text-align: center;
+/* Circular Lattice Animation */
+.circular-lattice {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  margin: 0 auto 40px;
+}
+
+.circle-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--primary);
+  border-radius: 50%;
+  opacity: 0.1;
+  animation: rotate-ring 10s linear infinite;
+}
+
+.circle-ring:nth-child(2) {
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+  border-color: var(--secondary);
+  animation-duration: 15s;
+  animation-direction: reverse;
+}
+
+.circle-ring:nth-child(3) {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  animation-duration: 20s;
+}
+
+@keyframes rotate-ring {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.lattice-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background-image: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  opacity: 0.2;
+  filter: blur(20px);
+  animation: pulse-center 2s ease-in-out infinite;
+}
+
+@keyframes pulse-center {
+  0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* Results Grid */
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.laptop-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform 0.3s;
+}
+
+.laptop-card:hover {
+  transform: translateY(-8px);
+}
+
+.laptop-image-container {
+  height: 200px;
+  background: #F9F9F7;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.laptop-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.laptop-content {
+  padding: 24px;
+}
+
+.match-score-badge {
+  background: #F0F7FF;
+  color: var(--primary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 110, 255, 0.1);
+}
+
+.laptop-brand {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   color: var(--text-muted);
-  padding: 48px 24px;
-  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.laptop-model {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 4px 0 16px;
+}
+
+.ai-reasoning {
+  background: #F9F9F7;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary);
+}
+
+.laptop-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.spec-item {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.spec-item strong {
+  color: var(--text);
+}
+
+.laptop-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.laptop-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.buy-btn {
+  background: var(--primary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
