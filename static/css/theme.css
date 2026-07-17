@@ -1,0 +1,352 @@
+/* 
+   Stitch-Inspired Theme for AI Laptop Advisor 
+   Primary Colors: 
+   - Electric Petra Blue: #00A3FF (Approximation)
+   - Copper Sand Gold: #D4A017 (Approximation)
+   - Background Canvas: #191A1F (Dark Theme)
+   - Surface: #282A2C
+   - Border: #404040
+*/
+
+:root {
+  --primary: #00A3FF; /* Electric Petra Blue */
+  --primary-hover: #33B5FF;
+  --secondary: #D4A017; /* Copper Sand Gold */
+  --secondary-hover: #E5B128;
+  --bg-canvas: #191A1F;
+  --surface: #282A2C;
+  --surface-hover: #323437;
+  --text: #FFFFFF;
+  --text-muted: #ACACAC;
+  --border: #404040;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text);
+  background-image: radial-gradient(circle at 50% 0%, rgba(0, 163, 255, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 100% 100%, rgba(212, 160, 23, 0.1) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+.wizard-card, .laptop-card, .loading-overlay {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.option-card .card-content {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.option-card input:checked + .card-content {
+  border-color: var(--primary);
+  background: rgba(0, 163, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 163, 255, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #0077FF);
+  border-radius: var(--radius-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.btn-secondary {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--glass);
+}
+
+.progress {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+/* Digital Lattice Animation for Loader */
+.loader-content .spinner {
+  border-top-color: var(--primary);
+  border-right-color: var(--secondary);
+  width: 80px;
+  height: 80px;
+  border-width: 4px;
+}
+
+.loading-overlay h3 {
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Overrides for existing styles */
+header h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(to right, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.highlight {
+  color: var(--secondary);
+  -webkit-text-fill-color: var(--secondary);
+}
+
+.logo {
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: var(--glass);
+  padding: 4px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  border: 1px solid var(--border);
+  color: var(--primary) !important;
+}
+
+.wizard-card {
+  padding: 48px;
+}
+
+.step h2 {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.card-content h3 {
+  color: var(--primary);
+}
+
+.card-content p {
+  color: var(--text-muted);
+}
+
+.laptop-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.laptop-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 163, 255, 0.15);
+  border-color: var(--primary);
+}
+
+.ai-reasoning {
+  background: rgba(212, 160, 23, 0.1) !important;
+  border-left: 4px solid var(--secondary);
+  color: #fff !important;
+}
+
+.match-score-label {
+  color: var(--secondary) !important;
+}
+
+.match-score-bar {
+  background: linear-gradient(90deg, var(--secondary), var(--primary)) !important;
+}
+
+.laptop-price {
+  color: var(--primary) !important;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.buy-btn {
+  background: var(--primary) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+footer {
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+  margin-top: 64px;
+}
+
+#refresh-prices-btn {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#refresh-prices-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Digital Lattice Animation */
+.digital-lattice {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 24px;
+}
+
+.node {
+  width: 25px;
+  height: 25px;
+  background: var(--primary);
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.node:nth-child(2) {
+  background: var(--secondary);
+  animation-delay: 0.2s;
+}
+
+.node:nth-child(3) {
+  background: var(--secondary);
+  animation-delay: 0.4s;
+}
+
+.node:nth-child(4) {
+  background: var(--primary);
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.5; box-shadow: 0 0 15px var(--primary); }
+}
+
+.status-update {
+  font-family: monospace;
+  color: var(--secondary);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  height: 1.2em;
+}
+
+/* Refined Stitch Design Elements */
+
+/* Chip styles for brand selection */
+.chip-label {
+  background: var(--glass) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  transition: all 0.3s ease;
+}
+
+.chip-option input:checked + .chip-label {
+  background: linear-gradient(135deg, var(--primary), #0077FF) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 20px rgba(0, 163, 255, 0.3);
+}
+
+/* Budget slider styling */
+.budget-slider {
+  background: var(--border);
+}
+
+.budget-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 0 15px rgba(0, 163, 255, 0.3);
+}
+
+.budget-slider::-moz-range-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+#budget-output {
+  color: var(--secondary);
+}
+
+/* Results section styling */
+.results-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+}
+
+.results-header h2 {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+}
+
+.model-info {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Shop offers styling */
+.shop-offers-section {
+  background: rgba(212, 160, 23, 0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.shop-offer-card {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.shop-visit-btn {
+  background: var(--primary) !important;
+  color: #fff !important;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  display: inline-block;
+  transition: all 0.2s;
+}
+
+.shop-visit-btn:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .wizard-card {
+    padding: 24px;
+  }
+
+  .laptop-card {
+    grid-column: span 12 !important;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Accessibility improvements */
+.btn-primary:focus,
+.btn-secondary:focus,
+.option-card:focus-within .card-content {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* No results state */
+.no-results {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 48px 24px;
+  font-size: 1.1rem;
+}

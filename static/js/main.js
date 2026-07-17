@@ -222,9 +222,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function showLoading(show) {
         if (show) {
             loadingOverlay.classList.remove('hidden');
+            startStatusUpdates();
         } else {
             loadingOverlay.classList.add('hidden');
+            stopStatusUpdates();
         }
+    }
+
+    let statusInterval;
+    const statuses = [
+        "Scanning Amman retail stocks...",
+        "Analyzing hardware benchmarks...",
+        "Comparing price history...",
+        "Optimizing performance ratios...",
+        "Stitching recommendations..."
+    ];
+
+    function startStatusUpdates() {
+        const statusEl = document.getElementById('status-update');
+        let i = 0;
+        statusEl.textContent = statuses[0];
+        statusInterval = setInterval(() => {
+            i = (i + 1) % statuses.length;
+            statusEl.textContent = statuses[i];
+        }, 1500);
+    }
+
+    function stopStatusUpdates() {
+        clearInterval(statusInterval);
     }
 
     function displayRecommendations(recommendations, userPreferences) {
