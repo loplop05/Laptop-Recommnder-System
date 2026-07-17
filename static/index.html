@@ -157,11 +157,21 @@
             </div>
 
             <section id="results-section" class="results-section hidden">
-                <div class="results-header">
-                    <h2>Your AI Recommendations</h2>
-                    <button id="start-over-btn" class="btn-secondary">← Start Over</button>
-                </div>
+                <h2>Your AI-Powered Recommendations</h2>
+                <p class="results-subtitle">Based on your profile and the Jordanian retail context.</p>
+                
                 <div id="recommendations-container" class="recommendations-grid"></div>
+
+                <div class="filter-bar">
+                    <span class="filter-label">Filter by:</span>
+                    <select class="filter-select"><option>Price Range</option></select>
+                    <select class="filter-select"><option>Brand</option></select>
+                    <select class="filter-select"><option>Use Case</option></select>
+                    <select class="filter-select"><option>Local Availability</option></select>
+                    <button class="btn-more-filters">More Filters</button>
+                </div>
+                
+                <button id="start-over-btn" class="btn-secondary">← Start Over</button>
             </section>
         </main>
     </div>
