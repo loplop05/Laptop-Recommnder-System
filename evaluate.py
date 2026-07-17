@@ -195,7 +195,7 @@ def run_evaluation(verbose=False):
     print(f"  Laptop Recommender — Accuracy Evaluation")
     print(f"  {total_cases} test cases | {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"{'='*70}\n")
-
+    
     for i, case in enumerate(TEST_CASES, 1):
         pref = case['pref']
         expect = case['expect']
