@@ -1,13 +1,14 @@
 import logging
-from unittest.mock import patch
-
+from unittest.mock import patch, MagicMock
 from ml_pipeline import LaptopRecommenderPipeline
 from refresh_data import scrape_all_shops
 
 logging.basicConfig(level=logging.INFO)
 
 def test_pipeline():
-    pipeline = LaptopRecommenderPipeline()
+    mock_repo = MagicMock()
+    mock_repo.filter_laptops.return_value = []
+    pipeline = LaptopRecommenderPipeline(mock_repo)
 
     pref = {
         "budget": 800,
@@ -29,12 +30,5 @@ def test_scraper(mock_scrape_all_shops):
     assert count == 3
 
 if __name__ == "__main__":
-    try:
-        test_pipeline()
-    except Exception as e:
-        print(f"Pipeline Test Failed: {e}")
-        
-    try:
-        test_scraper()
-    except Exception as e:
-        print(f"Scraper Test Failed: {e}")
+    test_pipeline()
+    test_scraper()

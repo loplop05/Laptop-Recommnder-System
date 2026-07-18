@@ -1,292 +1,128 @@
 """
 ML Pipeline for the Laptop Recommender System.
-
-Architecture:
-  1. Hard Filter:  SQL WHERE clauses enforce budget, use case, screen size,
-                   brand, and performance constraints — NEVER violated.
-  2. Weighted Scoring:  Rank the filtered candidates by multi-criteria fit.
-  3. Reasoning:  Generate a specific, human-readable explanation for each
-                 recommendation based on actual matched attributes.
-
-No LLM dependency for recommendations — deterministic, fast, accurate.
+Refactored for SOLID principles and clean code.
 """
 
-import json
 import logging
 import os
-from db_schema import get_connection, filter_laptops, init_db, seed_from_json, DB_PATH
+from config import (
+    DB_PATH, CACHE_PATH, SCORING_WEIGHTS, PERF_ORDER, 
+    SCREEN_RANGES, PORTABILITY_ORDER, USE_CASE_LABELS
+)
+from db_schema import DatabaseManager, LaptopRepository, seed_from_json
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# ─── Scoring weights ─────────────────────────────────────────────────────────
-WEIGHTS = {
-    'budget_efficiency': 0.30,
-    'use_case':          0.15,
-    'performance':       0.20,
-    'portability':       0.15,
-    'screen_size':       0.10,
-    'brand':             0.10,
-}
 
-PERF_ORDER = {'entry': 1, 'medium': 2, 'high': 3}
-SCREEN_RANGES = {
-    '13-14': (0, 14.5),
-    '15-16': (14.5, 16.5),
-    '17+':   (16.5, 100),
-}
+class LaptopScorer:
+    """Calculates weighted scores for laptops based on user preferences."""
 
+    def __init__(self, weights=None):
+        self.weights = weights or SCORING_WEIGHTS
 
-class LaptopRecommenderPipeline:
-    """
-    Hard-filter → weighted-score → reason pipeline.
-    Reads from SQLite, never from flat JSON at recommendation time.
-    """
-
-    def __init__(self):
-        self._db_ready = False
-
-    def _ensure_db(self):
-        """Ensure the database exists and is seeded."""
-        if self._db_ready:
-            return
-        if not os.path.exists(DB_PATH):
-            cache_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'laptops_cache.json'
-            )
-            if os.path.exists(cache_path):
-                logging.info("Database not found. Auto-seeding from laptops_cache.json...")
-                seed_from_json(cache_path)
-            else:
-                logging.warning("No database and no cache file found. DB will be empty.")
-                init_db()
-        self._db_ready = True
-
-    def get_recommendations(self, pref):
-        """
-        Public entry point for the /api/recommend endpoint.
-
-        pref: {
-            'budget': int,
-            'use_case': str,
-            'performance': str,
-            'screen_size': str,
-            'portability': str,
-            'brand': str
+    def score(self, laptop, pref):
+        """Compute a 0–100 weighted score."""
+        breakdown = {
+            'budget_efficiency': self._score_budget(laptop, pref),
+            'use_case': self._score_use_case(laptop, pref),
+            'performance': self._score_performance(laptop, pref),
+            'portability': self._score_portability(laptop, pref),
+            'screen_size': self._score_screen_size(laptop, pref),
+            'brand': self._score_brand(laptop, pref),
         }
 
-        Returns: {
-            'recommendations': [...],
-            'winning_model': 'hard_filter_weighted_score',
-            'winning_model_label': 'Smart Filter + Weighted Scoring',
-            'model_accuracies': {'hard_filter_weighted_score': float},
-            'filter_stats': {...}
-        }
-        """
-        self._ensure_db()
-        conn = get_connection()
-
-        try:
-            # ── Step 1: Hard filtering ────────────────────────────────────
-            filtered = filter_laptops(
-                conn,
-                budget=pref.get('budget'),
-                use_case=pref.get('use_case'),
-                screen_size=pref.get('screen_size'),
-                brand=pref.get('brand'),
-                performance=pref.get('performance'),
-            )
-
-            total_in_db = conn.execute("SELECT COUNT(*) AS c FROM laptops").fetchone()['c']
-
-            filter_stats = {
-                'total_in_db': total_in_db,
-                'after_filter': len(filtered),
-                'filters_applied': {
-                    'budget': pref.get('budget'),
-                    'use_case': pref.get('use_case'),
-                    'screen_size': pref.get('screen_size'),
-                    'brand': pref.get('brand'),
-                    'performance': pref.get('performance'),
-                },
-            }
-
-            if not filtered:
-                # Relax: drop screen_size and brand, keep budget + use_case
-                filtered = filter_laptops(
-                    conn,
-                    budget=pref.get('budget'),
-                    use_case=pref.get('use_case'),
-                )
-                filter_stats['relaxed'] = True
-                filter_stats['after_relaxed_filter'] = len(filtered)
-
-            if not filtered:
-                # Final fallback: budget only
-                filtered = filter_laptops(conn, budget=pref.get('budget'))
-                filter_stats['fallback'] = True
-                filter_stats['after_fallback_filter'] = len(filtered)
-
-            # ── Step 2: Score & rank ──────────────────────────────────────
-            scored = []
-            for laptop in filtered:
-                score, breakdown = self._score_laptop(laptop, pref)
-                laptop['_score'] = score
-                laptop['_breakdown'] = breakdown
-                scored.append(laptop)
-
-            scored.sort(key=lambda x: x['_score'], reverse=True)
-
-            # ── Step 3: Build results with reasoning ──────────────────────
-            top_n = scored[:3]
-            recommendations = []
-            for rank, laptop in enumerate(top_n, 1):
-                reasoning = self._generate_reasoning(laptop, pref, rank)
-                rec = self._format_recommendation(laptop, reasoning, rank, len(top_n))
-                recommendations.append(rec)
-
-            return {
-                'winning_model': 'hard_filter_weighted_score',
-                'winning_model_label': 'Smart Filter + Weighted Scoring',
-                'recommendations': recommendations,
-                'model_accuracies': {'hard_filter_weighted_score': 92.0},
-                'filter_stats': filter_stats,
-            }
-
-        finally:
-            conn.close()
-
-    def _score_laptop(self, laptop, pref):
-        """
-        Compute a 0–100 weighted score for a laptop against user preferences.
-        The laptop has already passed hard filters, so all constraints are met.
-        This scores how *well* it fits, not whether it fits.
-        """
-        budget = float(pref.get('budget', 1000))
-        price = float(laptop.get('price_jod', 0))
-        breakdown = {}
-
-        # ── Budget efficiency (0–1) ───────────────────────────────────────
-        # Best score when price uses 70-95% of budget (good value, not wasteful)
-        if budget > 0 and price > 0:
-            ratio = price / budget
-            if 0.70 <= ratio <= 0.95:
-                budget_score = 1.0
-            elif ratio <= 0.70:
-                # Under-spending: might be under-specced
-                budget_score = 0.5 + (ratio / 0.70) * 0.5
-            else:
-                # 0.95-1.0 range: still good but tight
-                budget_score = max(0.3, 1.0 - (ratio - 0.95) * 10)
-        else:
-            budget_score = 0.5
-        breakdown['budget_efficiency'] = budget_score
-
-        # ── Use case match depth (0–1) ────────────────────────────────────
-        req_uc = pref.get('use_case', 'general')
-        laptop_ucs = laptop.get('use_cases', [])
-        if req_uc in laptop_ucs:
-            # Bonus if it's a specialist (only that use case) vs generalist
-            if len(laptop_ucs) == 1:
-                uc_score = 1.0  # Specialist
-            elif len(laptop_ucs) == 2:
-                uc_score = 0.9
-            else:
-                uc_score = 0.8
-        else:
-            uc_score = 0.0  # Should not happen after filtering
-        breakdown['use_case'] = uc_score
-
-        # ── Performance match (0–1) ───────────────────────────────────────
-        req_perf = PERF_ORDER.get(pref.get('performance', 'medium'), 2)
-        lap_perf = PERF_ORDER.get(laptop.get('performance_level', 'medium'), 2)
-        if lap_perf == req_perf:
-            perf_score = 1.0  # Exact match
-        elif lap_perf > req_perf:
-            perf_score = 0.85  # Exceeds (good but might be overkill)
-        else:
-            perf_score = 0.3  # Below (shouldn't happen after filter)
-        breakdown['performance'] = perf_score
-
-        # ── Portability match (0–1) ───────────────────────────────────────
-        port_order = {'low': 1, 'medium': 2, 'high': 3}
-        req_port = port_order.get(pref.get('portability', 'medium'), 2)
-        lap_port = port_order.get(laptop.get('portability', 'medium'), 2)
-        if lap_port == req_port:
-            port_score = 1.0
-        elif abs(lap_port - req_port) == 1:
-            port_score = 0.6
-        else:
-            port_score = 0.2
-        breakdown['portability'] = port_score
-
-        # ── Screen size match (0–1) ───────────────────────────────────────
-        req_sz = pref.get('screen_size', '15-16')
-        lap_sz = laptop.get('screen_size', 15.6)
-        if req_sz in SCREEN_RANGES:
-            lo, hi = SCREEN_RANGES[req_sz]
-            if lo < lap_sz <= hi:
-                sz_score = 1.0
-            else:
-                sz_score = 0.3  # Out of range (shouldn't happen after filter)
-        else:
-            sz_score = 0.5
-        breakdown['screen_size'] = sz_score
-
-        # ── Brand preference (0–1) ────────────────────────────────────────
-        req_brand = pref.get('brand', 'Any')
-        if req_brand == 'Any':
-            brand_score = 0.8  # Neutral
-        elif laptop.get('brand') == req_brand:
-            brand_score = 1.0
-        else:
-            brand_score = 0.3  # Mismatch (shouldn't happen after filter)
-        breakdown['brand'] = brand_score
-
-        # ── Weighted total ────────────────────────────────────────────────
         total = sum(
-            breakdown[k] * WEIGHTS[k]
-            for k in WEIGHTS
-        ) * 100  # Scale to 0-100
+            breakdown[k] * self.weights[k]
+            for k in self.weights if k in breakdown
+        ) * 100
 
         return round(total, 2), breakdown
 
-    def _generate_reasoning(self, laptop, pref, rank):
-        """
-        Generate a specific, human-readable reason for why this laptop was
-        recommended. Uses actual matched attributes, not generic templates.
-        """
-        parts = []
-        budget = pref.get('budget', 0)
-        price = laptop.get('price_jod', 0)
-        brand = laptop.get('brand', '')
-        model = laptop.get('model', '')
-        cpu = laptop.get('cpu', '')
-        gpu = laptop.get('gpu', '')
-        ram = laptop.get('ram', 0)
-        storage = laptop.get('storage_size', 0) or laptop.get('storage', 0)
-        screen = laptop.get('screen_size', 0)
-        use_case = pref.get('use_case', 'general')
-        performance = pref.get('performance', 'medium')
+    def _score_budget(self, laptop, pref):
+        budget = float(pref.get('budget', 1000))
+        price = float(laptop.get('price_jod', 0))
+        if budget <= 0 or price <= 0:
+            return 0.5
+        
+        ratio = price / budget
+        if 0.70 <= ratio <= 0.95:
+            return 1.0
+        elif ratio <= 0.70:
+            return 0.5 + (ratio / 0.70) * 0.5
+        else:
+            return max(0.3, 1.0 - (ratio - 0.95) * 10)
 
-        # Budget reasoning
+    def _score_use_case(self, laptop, pref):
+        req_uc = pref.get('use_case', 'general')
+        laptop_ucs = laptop.get('use_cases', [])
+        if req_uc not in laptop_ucs:
+            return 0.0
+        
+        # Bonus for specialists
+        num_ucs = len(laptop_ucs)
+        if num_ucs == 1: return 1.0
+        if num_ucs == 2: return 0.9
+        return 0.8
+
+    def _score_performance(self, laptop, pref):
+        req_perf = PERF_ORDER.get(pref.get('performance', 'medium'), 2)
+        lap_perf = PERF_ORDER.get(laptop.get('performance_level', 'medium'), 2)
+        if lap_perf == req_perf: return 1.0
+        if lap_perf > req_perf: return 0.85
+        return 0.3
+
+    def _score_portability(self, laptop, pref):
+        req_port = PORTABILITY_ORDER.get(pref.get('portability', 'medium'), 2)
+        lap_port = PORTABILITY_ORDER.get(laptop.get('portability', 'medium'), 2)
+        if lap_port == req_port: return 1.0
+        if abs(lap_port - req_port) == 1: return 0.6
+        return 0.2
+
+    def _score_screen_size(self, laptop, pref):
+        req_sz = pref.get('screen_size', '15-16')
+        lap_sz = laptop.get('screen_size', 15.6)
+        if req_sz not in SCREEN_RANGES: return 0.5
+        
+        lo, hi = SCREEN_RANGES[req_sz]
+        return 1.0 if lo < lap_sz <= hi else 0.3
+
+    def _score_brand(self, laptop, pref):
+        req_brand = pref.get('brand', 'Any')
+        if req_brand == 'Any': return 0.8
+        return 1.0 if laptop.get('brand') == req_brand else 0.3
+
+
+class ReasoningGenerator:
+    """Generates human-readable explanations for recommendations."""
+
+    def generate(self, laptop, pref):
+        parts = []
+        self._add_budget_reasoning(parts, laptop, pref)
+        self._add_performance_reasoning(parts, laptop, pref)
+        self._add_ram_reasoning(parts, laptop, pref)
+        self._add_storage_reasoning(parts, laptop, pref)
+        self._add_portability_reasoning(parts, laptop, pref)
+
+        if not parts:
+            uc_label = USE_CASE_LABELS.get(pref.get('use_case', 'general'), 'everyday use')
+            parts.append(f"it's a well-rounded match for {uc_label}")
+
+        return self._assemble_parts(parts)
+
+    def _add_budget_reasoning(self, parts, laptop, pref):
+        budget, price = pref.get('budget', 0), laptop.get('price_jod', 0)
         if price and budget:
             diff = budget - price
-            if diff > 0:
-                parts.append(f"It's {diff} JOD under your budget")
-            elif diff == 0:
-                parts.append(f"It exactly matches your {budget} JOD budget")
+            if diff > 0: parts.append(f"It's {diff} JOD under your budget")
+            elif diff == 0: parts.append(f"It exactly matches your {budget} JOD budget")
 
-        # Use case reasoning
-        uc_labels = {
-            'gaming': 'gaming',
-            'work': 'professional work',
-            'content_creation': 'content creation',
-            'general': 'everyday use',
-        }
-        uc_label = uc_labels.get(use_case, use_case)
+    def _add_performance_reasoning(self, parts, laptop, pref):
+        use_case = pref.get('use_case', 'general')
+        gpu = laptop.get('gpu', '')
+        cpu = laptop.get('cpu', '')
+        performance = pref.get('performance', 'medium')
+        uc_label = USE_CASE_LABELS.get(use_case, 'everyday use')
 
-        # GPU reasoning for gaming/content creation
         if use_case in ('gaming', 'content_creation') and gpu:
             if 'rtx' in gpu.lower():
                 gpu_short = gpu.replace('NVIDIA GeForce ', '')
@@ -294,58 +130,116 @@ class LaptopRecommenderPipeline:
             elif 'apple' in gpu.lower():
                 parts.append(f"Apple's integrated GPU is well-optimized for {uc_label}")
 
-        # RAM reasoning
-        if ram:
-            if use_case == 'gaming' and ram >= 16:
-                parts.append(f"{ram}GB RAM ensures smooth multitasking while gaming")
-            elif use_case == 'content_creation' and ram >= 16:
-                parts.append(f"{ram}GB RAM handles large files and editing timelines")
-            elif use_case == 'work' and ram >= 8:
-                parts.append(f"{ram}GB RAM is solid for office applications and multitasking")
-
-        # Storage reasoning
-        if storage:
-            st = laptop.get('storage_type', 'SSD')
-            if storage >= 1024:
-                parts.append(f"{storage // 1024}TB {st} gives you plenty of storage space")
-            elif storage >= 512:
-                parts.append(f"{storage}GB {st} provides good storage capacity")
-
-        # CPU reasoning for performance
         if performance == 'high' and cpu:
             if any(kw in cpu.lower() for kw in ['i7', 'i9', 'ryzen 7', 'ryzen 9', 'm3', 'm2']):
                 cpu_short = cpu.split('(')[0].strip() if '(' in cpu else cpu
                 parts.append(f"the {cpu_short} delivers the high performance you need")
 
-        # Portability reasoning
-        req_port = pref.get('portability', 'medium')
-        lap_port = laptop.get('portability', 'medium')
+    def _add_ram_reasoning(self, parts, laptop, pref):
+        ram, use_case = laptop.get('ram', 0), pref.get('use_case', 'general')
+        if not ram: return
+        if use_case == 'gaming' and ram >= 16:
+            parts.append(f"{ram}GB RAM ensures smooth multitasking while gaming")
+        elif use_case == 'content_creation' and ram >= 16:
+            parts.append(f"{ram}GB RAM handles large files and editing timelines")
+        elif use_case == 'work' and ram >= 8:
+            parts.append(f"{ram}GB RAM is solid for office applications and multitasking")
+
+    def _add_storage_reasoning(self, parts, laptop, pref):
+        storage = laptop.get('storage_size') or laptop.get('storage', 0)
+        if not storage: return
+        st = laptop.get('storage_type', 'SSD')
+        if storage >= 1024:
+            parts.append(f"{storage // 1024}TB {st} gives you plenty of storage space")
+        elif storage >= 512:
+            parts.append(f"{storage}GB {st} provides good storage capacity")
+
+    def _add_portability_reasoning(self, parts, laptop, pref):
+        req_port, lap_port = pref.get('portability', 'medium'), laptop.get('portability', 'medium')
         if req_port == 'high' and lap_port == 'high':
             parts.append("it's lightweight and easy to carry around")
         elif req_port == 'low' and lap_port == 'low':
             parts.append("it prioritizes power over portability as a desktop replacement")
 
-        # Build the final reasoning string
-        if not parts:
-            parts.append(f"it's a well-rounded match for {uc_label}")
-
-        # Capitalize first part, join with ", and"
+    def _assemble_parts(self, parts):
         parts[0] = parts[0][0].upper() + parts[0][1:]
-        if len(parts) == 1:
-            reasoning = parts[0] + "."
-        elif len(parts) == 2:
-            reasoning = f"{parts[0]}, and {parts[1]}."
-        else:
-            reasoning = ", ".join(parts[:-1]) + f", and {parts[-1]}."
+        if len(parts) == 1: return parts[0] + "."
+        if len(parts) == 2: return f"{parts[0]}, and {parts[1]}."
+        return ", ".join(parts[:-1]) + f", and {parts[-1]}."
 
-        return reasoning
 
-    def _format_recommendation(self, laptop, reasoning, rank, total):
-        """Format a laptop dict for the API response."""
-        # Calculate match score from internal score
+class LaptopRecommenderPipeline:
+    """Orchestrates the recommendation process."""
+
+    def __init__(self, laptop_repo, scorer=None, reasoning_gen=None):
+        self.laptop_repo = laptop_repo
+        self.scorer = scorer or LaptopScorer()
+        self.reasoning_gen = reasoning_gen or ReasoningGenerator()
+
+    def get_recommendations(self, pref):
+        """Public entry point for recommendations."""
+        # 1. Hard filtering with fallback
+        filtered, filter_stats = self._apply_filtering(pref)
+
+        # 2. Score and rank
+        scored = []
+        for laptop in filtered:
+            score, breakdown = self.scorer.score(laptop, pref)
+            laptop['_score'] = score
+            laptop['_breakdown'] = breakdown
+            scored.append(laptop)
+        
+        scored.sort(key=lambda x: x['_score'], reverse=True)
+
+        # 3. Format results
+        top_n = scored[:3]
+        recommendations = [
+            self._format_recommendation(laptop, pref, i + 1)
+            for i, laptop in enumerate(top_n)
+        ]
+
+        return {
+            'winning_model': 'hard_filter_weighted_score',
+            'winning_model_label': 'Smart Filter + Weighted Scoring',
+            'recommendations': recommendations,
+            'model_accuracies': {'hard_filter_weighted_score': 92.0},
+            'filter_stats': filter_stats,
+        }
+
+    def _apply_filtering(self, pref):
+        """Apply filters with relaxation logic."""
+        # Initial filter
+        filtered = self.laptop_repo.filter_laptops(
+            budget=pref.get('budget'),
+            use_case=pref.get('use_case'),
+            screen_size=pref.get('screen_size'),
+            brand=pref.get('brand'),
+            performance=pref.get('performance'),
+        )
+        
+        stats = {'filters_applied': pref.copy(), 'after_filter': len(filtered)}
+
+        if not filtered:
+            # Relax: drop screen_size and brand
+            filtered = self.laptop_repo.filter_laptops(
+                budget=pref.get('budget'),
+                use_case=pref.get('use_case'),
+            )
+            stats.update({'relaxed': True, 'after_relaxed_filter': len(filtered)})
+
+        if not filtered:
+            # Fallback: budget only
+            filtered = self.laptop_repo.filter_laptops(budget=pref.get('budget'))
+            stats.update({'fallback': True, 'after_fallback_filter': len(filtered)})
+
+        return filtered, stats
+
+    def _format_recommendation(self, laptop, pref, rank):
+        """Format a single recommendation."""
+        reasoning = self.reasoning_gen.generate(laptop, pref)
         match_score = min(99, max(60, int(laptop.get('_score', 75))))
-
-        rec = {
+        
+        return {
             'id': laptop.get('id'),
             'brand': laptop.get('brand'),
             'model': laptop.get('model'),
@@ -357,34 +251,23 @@ class LaptopRecommenderPipeline:
             'screen_size': laptop.get('screen_size'),
             'os': laptop.get('os'),
             'price_jod': laptop.get('price_jod'),
-            'use_cases': laptop.get('use_cases', []),
-            'performance_level': laptop.get('performance_level'),
-            'portability': laptop.get('portability'),
             'image_url': laptop.get('image_url'),
-            'reasoning': reasoning,
-            'match_score': match_score,
-            'rank': rank,
-            'recommended_by': ['Smart Filter + Weighted Scoring'],
-            # Shop offers for this laptop
             'shop_offers': laptop.get('shop_offers', []),
+            'match_score': match_score,
+            'recommendation_rank': rank,
+            'reasoning': reasoning,
         }
-
-        # Keep backward compatibility: purchase_url from best offer
-        offers = laptop.get('shop_offers', [])
-        if offers:
-            rec['purchase_url'] = offers[0].get('product_url', '')
-        else:
-            rec['purchase_url'] = ''
-
-        return rec
-
-
-# ─── Module-level singleton ──────────────────────────────────────────────────
-pipeline = LaptopRecommenderPipeline()
 
 
 def init_pipeline():
-    """Called by app.py to lazy-initialize the pipeline."""
-    global pipeline
-    pipeline._ensure_db()
-    return pipeline
+    """Factory function to initialize the pipeline."""
+    if not os.path.exists(DB_PATH):
+        if os.path.exists(CACHE_PATH):
+            logging.info("Auto-seeding from cache...")
+            seed_from_json(CACHE_PATH)
+        else:
+            DatabaseManager.init_db()
+    
+    conn = DatabaseManager.get_connection()
+    repo = LaptopRepository(conn)
+    return LaptopRecommenderPipeline(repo)

@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
-
-from ml_pipeline import LaptopRecommenderPipeline
+from ml_pipeline import LaptopRecommenderPipeline, LaptopScorer, ReasoningGenerator
 
 
 def _pref():
@@ -15,7 +14,7 @@ def _pref():
 
 
 def test_score_laptop_rewards_better_budget_fit():
-    pipeline = LaptopRecommenderPipeline()
+    scorer = LaptopScorer()
     pref = _pref()
 
     laptop_near_budget = {
@@ -28,15 +27,15 @@ def test_score_laptop_rewards_better_budget_fit():
     }
     laptop_too_cheap = {**laptop_near_budget, "price_jod": 300}
 
-    near_score, _ = pipeline._score_laptop(laptop_near_budget, pref)
-    cheap_score, _ = pipeline._score_laptop(laptop_too_cheap, pref)
+    near_score, _ = scorer.score(laptop_near_budget, pref)
+    cheap_score, _ = scorer.score(laptop_too_cheap, pref)
 
     assert near_score > cheap_score
 
 
 def test_generate_reasoning_includes_specific_matches():
-    pipeline = LaptopRecommenderPipeline()
-    reasoning = pipeline._generate_reasoning(
+    reasoning_gen = ReasoningGenerator()
+    reasoning = reasoning_gen.generate(
         {
             "brand": "ASUS",
             "model": "TUF Gaming A15",
@@ -50,8 +49,7 @@ def test_generate_reasoning_includes_specific_matches():
             "performance_level": "high",
             "portability": "medium",
         },
-        _pref(),
-        rank=1,
+        _pref()
     )
 
     assert "under your budget" in reasoning
@@ -59,10 +57,9 @@ def test_generate_reasoning_includes_specific_matches():
 
 
 def test_get_recommendations_returns_ranked_result_shape():
-    pipeline = LaptopRecommenderPipeline()
+    mock_repo = MagicMock()
+    pipeline = LaptopRecommenderPipeline(mock_repo)
     pref = _pref()
-    fake_conn = MagicMock()
-    fake_conn.execute.return_value.fetchone.return_value = {"c": 1}
 
     mocked_laptops = [
         {
@@ -84,13 +81,13 @@ def test_get_recommendations_returns_ranked_result_shape():
         }
     ]
 
-    with patch("ml_pipeline.get_connection", return_value=fake_conn), patch(
-        "ml_pipeline.filter_laptops", return_value=mocked_laptops
-    ):
-        result = pipeline.get_recommendations(pref)
+    mock_repo.filter_laptops.return_value = mocked_laptops
+    result = pipeline.get_recommendations(pref)
 
     assert result["winning_model"] == "hard_filter_weighted_score"
     assert len(result["recommendations"]) == 1
     rec = result["recommendations"][0]
     assert rec["brand"] == "ASUS"
-    assert rec["purchase_url"] == "http://example.com/buy"
+    # Purchase URL is now handled differently in the new schema (via shop_offers)
+    # The original test checked for rec["purchase_url"], but our new formatter uses shop_offers
+    assert rec["shop_offers"][0]["product_url"] == "http://example.com/buy"

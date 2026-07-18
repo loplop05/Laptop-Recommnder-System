@@ -1,29 +1,28 @@
 import os
-import json
 import logging
-import secrets
 from functools import wraps
-# pyrefly: ignore [missing-import]
-from flask import Flask, render_template, jsonify, request, abort
-
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv
+
+from config import (
+    RATE_LIMIT, RATE_WINDOW, BUDGET_MIN, BUDGET_MAX,
+    ALLOWED_USE_CASES, ALLOWED_PERFORMANCE, ALLOWED_SCREEN_SIZES,
+    ALLOWED_PORTABILITIES, ALLOWED_BRANDS, DB_PATH, CACHE_PATH
+)
+from db_schema import DatabaseManager, LaptopRepository, seed_from_json
+
 load_dotenv()
 
-# Configure logging — do NOT log sensitive user data
+# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # ─── Application factory ──────────────────────────────────────────────────────
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
-# TODO(security): In production, serve over HTTPS via a reverse proxy (nginx/caddy).
-# TODO(security): Consider OAuth providers for any future user accounts.
-# TODO(security): Implement MFA if user accounts are added in the future.
-
 # ─── Security headers middleware ──────────────────────────────────────────────
 @app.after_request
 def set_security_headers(response):
     """Attach strict security headers to every response."""
-    # Allow images from Unsplash CDN used in laptop database
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
         "script-src 'self'; "
@@ -38,20 +37,15 @@ def set_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
-    # Prevent back-button cache leaks for API routes
     if request.path.startswith('/api/'):
         response.headers['Cache-Control'] = 'no-store'
     return response
-
 
 # ─── Rate limiting (simple in-memory per-IP) ─────────────────────────────────
 from collections import defaultdict
 import time
 
 _rate_store = defaultdict(lambda: {'count': 0, 'reset_at': 0})
-RATE_LIMIT = 30        # requests
-RATE_WINDOW = 60       # seconds
-
 
 def rate_limited(f):
     """Decorator: simple per-IP sliding-window rate limiter."""
@@ -70,17 +64,6 @@ def rate_limited(f):
         return f(*args, **kwargs)
     return decorated
 
-
-# ─── Allowed values (strict allow-lists) ─────────────────────────────────────
-ALLOWED_USE_CASES = {"gaming", "work", "content_creation", "general"}
-ALLOWED_PERFORMANCE = {"entry", "medium", "high"}
-ALLOWED_SCREEN_SIZES = {"13-14", "15-16", "17+"}
-ALLOWED_PORTABILITIES = {"low", "medium", "high"}
-ALLOWED_BRANDS = {"Apple", "ASUS", "Lenovo", "HP", "Dell", "Acer", "MSI", "Razer", "Any"}
-BUDGET_MIN = 100
-BUDGET_MAX = 10000
-
-
 # ─── Lazy-load ML pipeline ────────────────────────────────────────────────────
 _pipeline = None
 
@@ -88,151 +71,111 @@ def get_pipeline():
     global _pipeline
     if _pipeline is None:
         from ml_pipeline import init_pipeline
-        logging.info("Initializing ML pipeline...")
         _pipeline = init_pipeline()
-        logging.info("ML pipeline ready.")
     return _pipeline
 
+# ─── Request Validation ──────────────────────────────────────────────────────
+class PreferenceValidator:
+    @staticmethod
+    def validate(data):
+        """Validate recommendation preferences."""
+        if not data or not isinstance(data, dict):
+            return None, "Invalid request body"
+
+        try:
+            budget = int(data.get('budget'))
+            if not (BUDGET_MIN <= budget <= BUDGET_MAX):
+                raise ValueError
+        except (TypeError, ValueError):
+            return None, f"Budget must be between {BUDGET_MIN} and {BUDGET_MAX} JOD"
+
+        validations = [
+            ('use_case', ALLOWED_USE_CASES),
+            ('performance', ALLOWED_PERFORMANCE),
+            ('screen_size', ALLOWED_SCREEN_SIZES),
+            ('portability', ALLOWED_PORTABILITIES),
+            ('brand', ALLOWED_BRANDS)
+        ]
+
+        for field, allowed in validations:
+            val = data.get(field)
+            if val not in allowed:
+                return None, f"Invalid {field} value"
+
+        return {
+            'budget': budget,
+            'use_case': data.get('use_case'),
+            'performance': data.get('performance'),
+            'screen_size': data.get('screen_size'),
+            'portability': data.get('portability'),
+            'brand': data.get('brand'),
+        }, None
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
 @app.route('/')
 def index():
     """Serve the main SPA."""
-    # Ensure index.html exists before serving
     if not os.path.exists(os.path.join(app.static_folder, 'index.html')):
-        return "Frontend files not found. Please ensure 'static/index.html' exists.", 404
+        return "Frontend files not found.", 404
     return app.send_static_file('index.html')
-
 
 @app.route('/api/laptops', methods=['GET'])
 @rate_limited
 def get_laptops():
-    """Return the current laptop database from SQLite (specs + shop offers)."""
-    from db_schema import get_connection, get_laptops_with_best_price, DB_PATH
-    import os as _os
-    if not _os.path.exists(DB_PATH):
-        # Auto-seed on first access
-        from db_schema import seed_from_json
-        cache = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'laptops_cache.json')
-        if _os.path.exists(cache):
-            seed_from_json(cache)
-    conn = get_connection()
+    """Return the current laptop database."""
+    if not os.path.exists(DB_PATH) and os.path.exists(CACHE_PATH):
+        seed_from_json(CACHE_PATH)
+    
+    conn = DatabaseManager.get_connection()
     try:
-        laptops = get_laptops_with_best_price(conn)
+        repo = LaptopRepository(conn)
+        laptops = repo.get_all_with_best_price()
+        
+        safe_fields = ['brand', 'model', 'cpu', 'gpu', 'ram', 'storage_size',
+                       'screen_size', 'price_jod', 'use_cases',
+                       'performance_level', 'portability', 'image_url',
+                       'shop_offers']
+        result = [{k: lap[k] for k in safe_fields if k in lap} for lap in laptops]
+        return jsonify({'laptops': result, 'count': len(result)})
     finally:
         conn.close()
-    # Return safe subset of fields
-    safe_fields = ['brand', 'model', 'cpu', 'gpu', 'ram', 'storage_size',
-                   'screen_size', 'price_jod', 'use_cases',
-                   'performance_level', 'portability', 'image_url',
-                   'shop_offers']
-    result = [{k: lap[k] for k in safe_fields if k in lap} for lap in laptops]
-    return jsonify({'laptops': result, 'count': len(result)})
-
 
 @app.route('/api/recommend', methods=['POST'])
 @rate_limited
 def recommend():
-    """
-    Accept user preferences and return laptop recommendations.
-    All inputs are strictly validated against allow-lists before use.
-    """
+    """Accept user preferences and return laptop recommendations."""
     if not request.is_json:
         return jsonify({'error': 'Content-Type must be application/json'}), 400
-
-    # Reject oversized payloads (>4 KB)
     if request.content_length and request.content_length > 4096:
         return jsonify({'error': 'Request too large'}), 413
 
-    try:
-        data = request.get_json(force=False, silent=True)
-    except Exception:
-        return jsonify({'error': 'Invalid JSON body'}), 400
+    data = request.get_json(silent=True)
+    pref, error = PreferenceValidator.validate(data)
+    if error:
+        return jsonify({'error': error}), 400
 
-    if not data or not isinstance(data, dict):
-        return jsonify({'error': 'Invalid request body'}), 400
-
-    # ── Strict input validation ──────────────────────────────────────────────
-
-    # 1. Budget — must be an integer within [BUDGET_MIN, BUDGET_MAX]
-    raw_budget = data.get('budget')
-    try:
-        budget = int(raw_budget)
-        if not (BUDGET_MIN <= budget <= BUDGET_MAX):
-            raise ValueError
-    except (TypeError, ValueError):
-        return jsonify({'error': f'Budget must be an integer between {BUDGET_MIN} and {BUDGET_MAX} JOD'}), 400
-
-    # 2. Use case — must be in allow-list
-    use_case = data.get('use_case', '')
-    if use_case not in ALLOWED_USE_CASES:
-        return jsonify({'error': 'Invalid use_case value'}), 400
-
-    # 3. Performance — must be in allow-list
-    performance = data.get('performance', '')
-    if performance not in ALLOWED_PERFORMANCE:
-        return jsonify({'error': 'Invalid performance value'}), 400
-
-    # 4. Screen size — must be in allow-list
-    screen_size = data.get('screen_size', '')
-    if screen_size not in ALLOWED_SCREEN_SIZES:
-        return jsonify({'error': 'Invalid screen_size value'}), 400
-
-    # 5. Portability — must be in allow-list
-    portability = data.get('portability', '')
-    if portability not in ALLOWED_PORTABILITIES:
-        return jsonify({'error': 'Invalid portability value'}), 400
-
-    # 6. Brand — must be in allow-list
-    brand = data.get('brand', 'Any')
-    if brand not in ALLOWED_BRANDS:
-        return jsonify({'error': 'Invalid brand value'}), 400
-
-    # ── Build validated preference dict ─────────────────────────────────────
-    pref = {
-        'budget': budget,
-        'use_case': use_case,
-        'performance': performance,
-        'screen_size': screen_size,
-        'portability': portability,
-        'brand': brand,
-    }
-
-    # ── Run ML pipeline ──────────────────────────────────────────────────────
     try:
         pipeline = get_pipeline()
         result = pipeline.get_recommendations(pref)
+        return jsonify(result)
     except Exception as e:
         logging.error(f"Recommendation engine error: {e}")
-        return jsonify({'error': 'Recommendation engine encountered an error. Please try again.'}), 500
-
-    return jsonify(result)
-
+        return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/api/refresh-prices', methods=['POST'])
 @rate_limited
 def refresh_prices():
-    """
-    Trigger a scrape of JOD prices from Jordanian retailers into the SQLite DB.
-    Falls back silently to cached data if scraping fails.
-    """
+    """Trigger a scrape of JOD prices."""
     try:
         from refresh_data import scrape_all_shops
         count = scrape_all_shops()
-        if count > 0:
-            return jsonify({'message': f'Prices refreshed. {count} offer(s) updated across all shops.', 'updated': count})
-        else:
-            return jsonify({'message': 'Prices are up to date (no changes from online sources).', 'updated': 0})
+        return jsonify({'message': f'Prices refreshed. {count} offer(s) updated.', 'updated': count})
     except Exception as e:
         logging.error(f"Price refresh error: {e}")
         return jsonify({'message': 'Could not refresh prices. Using cached data.', 'updated': 0}), 200
 
-
-# ─── Entry point ─────────────────────────────────────────────────────────────
 if __name__ == '__main__':
-    # In production (Render, Railway, etc.) PORT is injected via environment.
-    # Locally it falls back to 5000 on localhost.
     port = int(os.environ.get('PORT', 5000))
     host = '0.0.0.0' if os.environ.get('PORT') else '127.0.0.1'
     app.run(host=host, port=port, debug=False)
