@@ -49,3 +49,27 @@ def test_scrape_generic(mock_get):
     assert scraped["title"] == "ASUS TUF Gaming A15 Ryzen 7 RTX 4060 16gb"
     assert scraped["shop_id"] == 1
 
+def laptopSurveyTest():
+    
+        def check_laptop(ram, storage, processor_score, min_price, max_price):
+                laptops = ["Lenovo IdeaPad 3 - 15.6 inch FHD, AMD Ryzen 7 5700U, 8GB RAM, 512GB SSD, Windows 11",
+                        "Dell XPS 13 - 13.4 inch FHD, Intel Core i7-1255U, 16GB RAM, 1TB SSD, Windows 11",
+                       "MacBook Air M1 - 13.3 inch Retina, 8GB RAM, 256GB SSD, macOS Big Sur",
+                       "HP Pavilion 15 - 15.6 inch FHD, AMD Ryzen 5 5500U, 8GB RAM, 256GB SSD, Windows 11",
+                       "Acer Aspire 5 - 15.6 inch FHD, Intel Core i5-1135G7, 8GB RAM, 512GB SSD, Windows 11"]
+
+        for laptop in laptops:
+            features = parse_features(laptop)
+            ram_ok = features["ram"] >= ram
+            storage_ok = features["storage_gb"] >= storage
+            processor_ok = features["processor_score"] >= processor_score
+            price_ok = features["price_jod"] >= min_price and features["price_jod"] <= max_price
+
+            status = "✓ PASS" if (ram_ok and storage_ok and processor_ok and price_ok) else "✗ FAIL"
+            print(f"{status} | {laptop}")
+
+    # Test case from video
+        print("--- Testing Lenovo IdeaPad 3 requirement (8GB RAM, 512GB SSD, Ryzen 7, 600-900 JOD) ---")
+        check_laptop(8, 512, 21000, 600, 900)
+
+    
