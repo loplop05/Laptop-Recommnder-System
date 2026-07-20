@@ -44,6 +44,7 @@ SCREEN_RANGES = {
     '17+':   (16.5, 100),
 }
 
+
 PERF_ORDER = {'entry': 1, 'medium': 2, 'high': 3}
 
 
@@ -281,7 +282,7 @@ def run_evaluation(verbose=False):
 
     return accuracy, passed_cases, total_cases
 
-    
+
 
 
 if __name__ == '__main__':
