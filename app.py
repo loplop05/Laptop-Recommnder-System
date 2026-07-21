@@ -115,10 +115,24 @@ class PreferenceValidator:
 
 @app.route('/')
 def index():
-    """Serve the main SPA."""
+    """Serve the landing page."""
     if not os.path.exists(os.path.join(app.static_folder, 'index.html')):
         return "Frontend files not found.", 404
     return app.send_static_file('index.html')
+
+@app.route('/quiz')
+def quiz():
+    """Serve the quiz wizard page."""
+    if not os.path.exists(os.path.join(app.static_folder, 'quiz.html')):
+        return "Quiz file not found.", 404
+    return app.send_static_file('quiz.html')
+
+@app.route('/results')
+def results():
+    """Serve the recommendations results page."""
+    if not os.path.exists(os.path.join(app.static_folder, 'results.html')):
+        return "Results file not found.", 404
+    return app.send_static_file('results.html')
 
 @app.route('/api/laptops', methods=['GET'])
 @rate_limited

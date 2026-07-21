@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Laptop Quiz | LaptopFinder.jo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- Theme Configuration -->
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#2a2a2c",
+                    "tertiary-container": "#717176",
+                    "on-tertiary": "#2f3034",
+                    "on-primary": "#002b75",
+                    "on-secondary": "#2e3135",
+                    "on-primary-fixed-variant": "#003fa4",
+                    "error-container": "#93000a",
+                    "on-primary-container": "#f8f7ff",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#131315",
+                    "inverse-primary": "#0054d6",
+                    "inverse-surface": "#e4e2e4",
+                    "on-tertiary-fixed-variant": "#46464b",
+                    "tertiary-fixed-dim": "#c7c6cb",
+                    "primary-container": "#0066ff",
+                    "outline-variant": "#424656",
+                    "surface-container-low": "#1b1b1d",
+                    "surface-bright": "#39393b",
+                    "primary": "#b3c5ff",
+                    "jod-green": "#10B981",
+                    "surface-container-highest": "#353437",
+                    "on-surface": "#e4e2e4",
+                    "secondary-fixed-dim": "#c5c6cc",
+                    "error": "#ffb4ab",
+                    "surface-container": "#1f1f21",
+                    "on-background": "#e4e2e4",
+                    "surface-container-lowest": "#0e0e10",
+                    "background": "#131315",
+                    "on-tertiary-container": "#f8f7fc",
+                    "tertiary": "#c7c6cb",
+                    "electric-blue": "#3B82F6",
+                    "secondary-fixed": "#e1e2e8",
+                    "tertiary-fixed": "#e3e2e7",
+                    "on-error": "#690005",
+                    "primary-fixed-dim": "#b3c5ff",
+                    "surface-tint": "#b3c5ff",
+                    "surface-charcoal": "#121214",
+                    "primary-fixed": "#dae1ff",
+                    "on-secondary-fixed-variant": "#44474c",
+                    "surface-variant": "#353437",
+                    "outline": "#8c90a1",
+                    "on-primary-fixed": "#001849",
+                    "on-secondary-container": "#b3b5bb",
+                    "secondary-container": "#44474c",
+                    "secondary": "#c5c6cc",
+                    "inverse-on-surface": "#303032",
+                    "on-surface-variant": "#c2c6d8",
+                    "on-tertiary-fixed": "#1a1b1f",
+                    "surface": "#131315",
+                    "on-secondary-fixed": "#191c20"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "stack-lg": "32px",
+                    "stack-sm": "8px",
+                    "margin-desktop": "40px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            background-color: #131315;
+            color: #e4e2e4;
+            scroll-behavior: smooth;
+        }
+        .glass-card {
+            background: rgba(29, 29, 31, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .option-card-input:checked + .option-card-design {
+            border-color: #3B82F6;
+            background-color: rgba(59, 130, 246, 0.08);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
+        <div class="flex items-center gap-stack-md">
+            <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</a>
+        </div>
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/">Home</a>
+            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/#how-it-works">How it Works</a>
+            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/#about">About</a>
+        </div>
+        <div class="flex items-center">
+            <a href="/quiz" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-md text-label-md font-bold active:scale-95 transition-transform hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                Start Quiz
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="relative pt-24 pb-16 flex-grow flex flex-col items-center justify-center px-margin-mobile">
+    <div class="w-full max-w-4xl flex flex-col gap-6">
+        <!-- Progress Bar at top of card -->
+        <div class="w-full">
+            <div class="flex justify-between items-center text-outline text-[12px] font-bold uppercase tracking-wider mb-2">
+                <span>Quiz Progress</span>
+                <span id="quiz-step-indicator">Step 1 of 6</span>
+            </div>
+            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div id="quiz-progress-bar" class="h-full bg-electric-blue transition-all duration-300" style="width: 16.6%"></div>
+            </div>
+        </div>
+
+        <!-- Main centered Question Card -->
+        <div class="glass-card rounded-2xl p-8 md:p-12 relative overflow-hidden w-full">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-electric-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <form id="recommend-form" class="flex flex-col gap-8">
+                <!-- Step 1: Use Case -->
+                <div class="quiz-step-section active" data-step-content="1">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">What is your primary use case?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Select the primary way you'll use your new laptop for the best recommendations in Jordan.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="use_case" value="work" checked class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">work</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Work</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">Office work, browser-heavy applications, spreadsheets, and developer setups.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="use_case" value="gaming" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">sports_esports</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Gaming</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">AAA games, esports titles, and performance-centric 3D rendering environments.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="use_case" value="content_creation" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">palette</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Creative Work</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">Video editing, graphic design, photo retouching, and audio engineering projects.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="use_case" value="general" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">home</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Daily Use</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">Browsing the web, watching media, online streaming, and basic homework.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 2: Performance Level -->
+                <div class="quiz-step-section hidden" data-step-content="2">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">What performance level do you need?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Performance level determines processing power and responsiveness of your machine.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="performance" value="entry" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">battery_saver</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Entry Level</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Focus on battery life and cost efficiency. Good for basic tasks.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="performance" value="medium" checked class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">speed</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Balanced</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Optimal blend of speed, efficiency, and value for everyday multitasking.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="performance" value="high" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">bolt</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Powerhouse</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Maximum hardware performance. Designed for heavy workloads & gaming.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 3: Screen Size -->
+                <div class="quiz-step-section hidden" data-step-content="3">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">What screen size do you prefer?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Screen size dictates both viewing comfort and overall physical dimensions.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="screen_size" value="13-14" checked class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">laptop_mac</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">13" - 14"</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Highly compact and lightweight. Perfect for students and travelers.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="screen_size" value="15-16" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">laptop</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">15" - 16"</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Balanced size. The standard choice for business work and casual gaming.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="screen_size" value="17+" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">desktop_windows</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">17"+</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Desktop replacement size. Maximum viewing real estate for productivity.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 4: Portability -->
+                <div class="quiz-step-section hidden" data-step-content="4">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">How important is portability?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Portability balances physical weight against maximum cooling capacity and performance.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="portability" value="high" checked class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">flight</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">High</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Extremely thin design and exceptional battery life for daily travel.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="portability" value="medium" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">fit_screen</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Medium</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Standard dimensions and normal weight. Fits well in a laptop bag.</p>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="portability" value="low" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all duration-200 h-full">
+                                <div class="w-12 h-12 rounded-xl bg-electric-blue/15 flex items-center justify-center text-electric-blue mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[28px]">dns</span>
+                                </div>
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Low</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Heavier build, prioritize thermal cooling performance over weight.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 5: Brand Preference -->
+                <div class="quiz-step-section hidden" data-step-content="5">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">Do you have a brand preference?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Filter by your preferred brand or select 'Any Brand' for a spec-first search.</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                        <label class="relative cursor-pointer group col-span-2 sm:col-span-3 md:col-span-5">
+                            <input type="radio" name="brand" value="Any" checked class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-6 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-headline-md text-on-surface">Any Brand</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="Apple" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">Apple</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="ASUS" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">ASUS</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="Lenovo" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">Lenovo</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="HP" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">HP</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="Dell" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">Dell</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="Acer" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">Acer</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="MSI" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">MSI</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="brand" value="Razer" class="sr-only option-card-input">
+                            <div class="option-card-design flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-surface-container-low hover:border-white/20 transition-all text-center h-20">
+                                <span class="font-bold text-body-lg text-on-surface">Razer</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 6: Budget -->
+                <div class="quiz-step-section hidden" data-step-content="6">
+                    <div class="mb-8 text-center">
+                        <h2 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface mb-2">What is your budget?</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Adjust the slider to match your spending limit.</p>
+                    </div>
+                    <div class="flex flex-col items-center gap-6">
+                        <!-- Big bold price text -->
+                        <div class="flex items-baseline gap-2">
+                            <span id="budget-display-val" class="font-display-lg text-[56px] text-on-surface font-extrabold">1500</span>
+                            <span class="text-headline-lg font-bold text-on-surface-variant">JOD</span>
+                            <input type="hidden" id="budget-input" name="budget" value="1500">
+                        </div>
+
+                        <!-- Range Slider -->
+                        <div class="w-full mt-4 max-w-2xl px-4">
+                            <input type="range" id="budget-slider" min="150" max="3000" step="50" value="1500" class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-electric-blue outline-none">
+                            <div class="flex justify-between text-outline text-[12px] font-semibold mt-3">
+                                <span>0 JOD</span>
+                                <span>1500 JOD</span>
+                                <span>3000+ JOD</span>
+                            </div>
+                        </div>
+
+                        <!-- Info Panels in Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mt-8">
+                            <div class="flex gap-4 p-5 rounded-2xl border border-white/5 bg-surface-container-low items-start text-left">
+                                <span class="material-symbols-outlined text-electric-blue shrink-0 text-[24px]">info</span>
+                                <p class="font-body-md text-[13px] text-on-surface-variant leading-relaxed">
+                                    Most engineering students in Jordan find great value laptops between 600 - 900 JOD.
+                                </p>
+                            </div>
+                            <div class="flex gap-4 p-5 rounded-2xl border border-white/5 bg-surface-container-low items-start text-left">
+                                <span class="material-symbols-outlined text-jod-green shrink-0 text-[24px]">sell</span>
+                                <p class="font-body-md text-[13px] text-on-surface-variant leading-relaxed">
+                                    Prices reflect current listings at City Center, DNA Jordan, and PC Circle.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons below the card -->
+                <div class="flex justify-between items-center mt-6 pt-6 border-t border-white/5">
+                    <button type="button" id="prev-btn" class="px-6 py-3 border border-outline-variant text-on-surface rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-surface-container transition-all cursor-pointer select-none opacity-50 pointer-events-none">
+                        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                        Previous
+                    </button>
+                    
+                    <button type="button" id="next-btn" class="px-8 py-3 bg-electric-blue text-white rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
+                        Next Step
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-stack-lg border-t border-white/5 bg-surface-container-lowest">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div class="flex flex-col gap-stack-md">
+            <span class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</span>
+            <p class="font-body-md text-body-md text-on-tertiary-fixed-variant max-w-xs">
+                Helping Jordanians find the perfect tech at the right price since 2024.
+            </p>
+        </div>
+        <div class="flex flex-col gap-stack-md col-span-2 md:col-span-1 grid grid-cols-2 gap-4">
+            <div>
+                <h4 class="font-label-md text-label-md text-on-surface font-semibold mb-2">Quick Links</h4>
+                <ul class="flex flex-col gap-1">
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="/">Home</a></li>
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a></li>
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://citycenter.jo" target="_blank">City Center</a></li>
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://www.dna.jo" target="_blank">DNA Jordan</a></li>
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://pccircle.com" target="_blank">PC Circle</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">© 2026 LaptopFinder.jo. All rights reserved.</p>
+        <div class="flex gap-6">
+            <span class="material-symbols-outlined text-on-tertiary-fixed-variant cursor-pointer hover:text-electric-blue">share</span>
+            <span class="material-symbols-outlined text-on-tertiary-fixed-variant cursor-pointer hover:text-electric-blue">chat_bubble</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md transition-opacity duration-300 hidden">
+    <div class="glass-card p-10 rounded-2xl border-white/10 max-w-sm w-full text-center flex flex-col items-center gap-6">
+        <div class="w-16 h-16 border-4 border-electric-blue border-t-transparent rounded-full animate-spin"></div>
+        <div>
+            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Analyzing the Market</h3>
+            <p id="status-update" class="font-body-md text-body-md text-on-surface-variant">Scanning Amman retail stocks...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/quiz.js"></script>
+</body>
+</html>
