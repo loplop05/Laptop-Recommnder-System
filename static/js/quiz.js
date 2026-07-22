@@ -45,18 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Previous button opacity and clickability
         if (currentStep === 1) {
-            prevBtn.classList.add('opacity-40', 'pointer-events-none');
+            prevBtn.classList.add('opacity-0', 'pointer-events-none');
         } else {
-            prevBtn.classList.remove('opacity-40', 'pointer-events-none');
+            prevBtn.classList.remove('opacity-0', 'pointer-events-none');
         }
 
         // Change button text on final step
         if (currentStep === totalSteps) {
-            nextBtn.innerHTML = `Review Recommendations <span class="material-symbols-outlined text-[18px]">check</span>`;
-            nextBtn.className = "px-8 py-3 bg-jod-green text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-jod-green-dark transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
+            nextBtn.innerHTML = `Show Recommendations <span class="material-symbols-outlined text-[18px]">search</span>`;
+            nextBtn.className = "bg-jod-green text-white px-8 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 cursor-pointer";
         } else {
             nextBtn.innerHTML = `Next Step <span class="material-symbols-outlined text-[18px]">arrow_forward</span>`;
-            nextBtn.className = "px-8 py-3 bg-electric-blue text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-electric-blue-dark transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
+            nextBtn.className = "bg-electric-blue text-white px-8 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 cursor-pointer";
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -1,331 +1,250 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en" class="dark">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LaptopFinder.jo | Jordan's Premier Laptop Recommendation Engine</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     
-    <!-- Theme Configuration -->
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
     <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "dark-bg": "#0d1117",
-                    "dark-surface": "#161b22",
-                    "dark-card": "#1c2128",
-                    "dark-border": "#30363d",
-                    "dark-text": "#f0f6fc",
-                    "dark-text-muted": "#8b949e",
-                    "dark-text-subtle": "#6e7681",
-                    "electric-blue": "#3B82F6",
-                    "electric-blue-dark": "#2563eb",
-                    "jod-green": "#10B981",
-                    "jod-green-dark": "#059669",
-                    "surface-container": "#1f1f21",
-                    "surface-container-low": "#1b1b1d",
-                    "surface-container-lowest": "#0e0e10",
-                    "on-surface": "#e4e2e4",
-                    "on-surface-variant": "#c2c6d8",
-                    "primary-container": "#0066ff",
-                    "on-primary-container": "#f8f7ff",
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "2xl": "1rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "margin-mobile": "16px",
-                    "gutter": "24px",
-                    "container-max": "1280px",
-                    "stack-lg": "32px",
-                    "stack-sm": "8px",
-                    "margin-desktop": "40px",
-                    "stack-md": "16px"
-            },
-            "fontFamily": {
-                    "body-lg": ["Inter"],
-                    "headline-lg": ["Plus Jakarta Sans"],
-                    "headline-md": ["Plus Jakarta Sans"],
-                    "display-lg": ["Plus Jakarta Sans"],
-                    "label-md": ["Inter"],
-                    "label-sm": ["Inter"],
-                    "body-md": ["Inter"]
-            },
-            "fontSize": {
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
-                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#2a2a2c",
+                        "tertiary-container": "#717176",
+                        "on-tertiary": "#2f3034",
+                        "on-primary": "#002b75",
+                        "on-secondary": "#2e3135",
+                        "on-primary-fixed-variant": "#003fa4",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#f8f7ff",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#131315",
+                        "inverse-primary": "#0054d6",
+                        "inverse-surface": "#e4e2e4",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "tertiary-fixed-dim": "#c7c6cb",
+                        "primary-container": "#0066ff",
+                        "outline-variant": "#424656",
+                        "surface-container-low": "#1b1b1d",
+                        "surface-bright": "#39393b",
+                        "primary": "#b3c5ff",
+                        "jod-green": "#10B981",
+                        "surface-container-highest": "#353437",
+                        "on-surface": "#e4e2e4",
+                        "secondary-fixed-dim": "#c5c6cc",
+                        "error": "#ffb4ab",
+                        "surface-container": "#1f1f21",
+                        "on-background": "#e4e2e4",
+                        "surface-container-lowest": "#0e0e10",
+                        "background": "#131315",
+                        "on-tertiary-container": "#f8f7fc",
+                        "tertiary": "#c7c6cb",
+                        "electric-blue": "#3B82F6",
+                        "secondary-fixed": "#e1e2e8",
+                        "tertiary-fixed": "#e3e2e7",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#b3c5ff",
+                        "surface-tint": "#b3c5ff",
+                        "surface-charcoal": "#121214",
+                        "primary-fixed": "#dae1ff",
+                        "on-secondary-fixed-variant": "#44474c",
+                        "surface-variant": "#353437",
+                        "outline": "#8c90a1",
+                        "on-primary-fixed": "#001849",
+                        "on-secondary-container": "#b3b5bb",
+                        "secondary-container": "#44474c",
+                        "secondary": "#c5c6cc",
+                        "inverse-on-surface": "#303032",
+                        "on-surface-variant": "#c2c6d8",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface": "#131315",
+                        "on-secondary-fixed": "#191c20"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "stack-md": "16px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
             }
-          },
-        },
-      }
+        }
     </script>
+
     <style>
         body {
-            background-color: #0d1117;
-            color: #f0f6fc;
+            background-color: #131315;
+            color: #e4e2e4;
             scroll-behavior: smooth;
         }
-        /* Subtle grid background pattern */
-        .grid-bg {
-            background-image: 
-                radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
+        .glass-card, .glass-panel {
+            background: rgba(29, 29, 31, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .material-filled {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        /* Smooth animations */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .slide-up {
-            animation: slideUp 0.5s ease-out forwards;
-            opacity: 0;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(0, 102, 255, 0.1), transparent 40%);
         }
     </style>
 </head>
-<body class="font-body-md text-body-md antialiased overflow-x-hidden">
+<body class="font-body-md text-body-md overflow-x-hidden selection:bg-electric-blue/30">
+    <!-- NavBar -->
+    <nav class="fixed top-0 w-full z-50 bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
+            <div class="flex items-center gap-stack-md cursor-pointer">
+                <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</a>
+            </div>
+            <div class="hidden md:flex items-center gap-gutter">
+                <a href="/" class="text-on-surface-variant font-medium hover:text-electric-blue transition-colors duration-200">Home</a>
+                <a href="#how-it-works" class="text-on-surface-variant font-medium hover:text-electric-blue transition-colors duration-200">How it Works</a>
+                <a href="#about" class="text-on-surface-variant font-medium hover:text-electric-blue transition-colors duration-200">About</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/quiz" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-md text-label-md font-bold active:scale-95 transition-transform hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                    Start Quiz
+                </a>
+            </div>
+        </div>
+    </nav>
 
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-dark-bg/90 backdrop-blur-md border-b border-dark-border">
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
-        <div class="flex items-center gap-stack-md">
-            <a href="/" class="font-headline-md text-headline-md font-bold text-dark-text">LaptopFinder.jo</a>
-        </div>
-        <!-- Desktop Nav -->
-        <div class="hidden md:flex items-center gap-8">
-            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="/">Home</a>
-            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="#how-it-works">How it Works</a>
-            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="#about">About</a>
-        </div>
-        <div class="flex items-center">
-            <a href="/quiz" class="bg-dark-surface hover:bg-dark-card border border-dark-border text-dark-text px-5 py-2 rounded-full font-label-md text-label-md font-semibold transition-all hover:border-dark-text-muted">
-                Start Quiz
-            </a>
-        </div>
-    </div>
-</nav>
-
-<main class="relative pt-16">
-    <!-- Hero Section -->
-    <section class="relative min-h-[90vh] flex items-center grid-bg overflow-hidden">
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center py-20">
-                <!-- Hero Content -->
-                <div class="flex flex-col items-start gap-6 fade-in">
-                    <!-- Badge -->
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-dark-surface border border-jod-green/40 text-jod-green">
-                        <span class="material-symbols-outlined material-filled text-[18px]">auto_awesome</span>
-                        <span class="font-label-md text-label-md font-medium">Jordan's #1 Laptop Recommender</span>
+    <div class="relative pt-16">
+        <!-- Hero Section -->
+        <section class="relative min-h-[921px] flex items-center justify-center hero-gradient overflow-hidden">
+            <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center py-stack-lg">
+                <div class="relative z-10 flex flex-col items-start gap-stack-md">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-electric-blue/10 border border-electric-blue/20 text-electric-blue mb-4">
+                        <span class="material-symbols-outlined text-[18px]">verified</span>
+                        <span class="font-label-sm text-label-sm">Jordan's #1 Laptop Recommender</span>
                     </div>
-                    
-                    <!-- Headline -->
-                    <h1 class="font-display-lg text-[40px] md:text-display-lg leading-[1.1] text-dark-text font-bold tracking-tight">
-                        Find your perfect <span class="text-electric-blue">laptop</span> in<br>seconds.
+                    <h1 class="font-display-lg text-[40px] md:text-display-lg leading-tight text-on-surface">
+                        Find your perfect <span class="text-electric-blue">laptop</span> in seconds.
                     </h1>
-                    
-                    <!-- Subtitle -->
-                    <p class="font-body-lg text-body-lg text-dark-text-muted max-w-lg leading-relaxed">
+                    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
                         The first deterministic laptop recommendation engine in Jordan. No AI hallucinations, just math and your specific needs mapped to local availability.
                     </p>
-                    
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto">
-                        <a href="/quiz" class="px-8 py-3.5 bg-electric-blue text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-electric-blue-dark transition-all hover:scale-[1.02] active:scale-95">
+                    <div class="flex flex-col sm:flex-row gap-4 mt-stack-md w-full sm:w-auto">
+                        <a href="/quiz" class="px-8 py-4 bg-electric-blue text-white rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20">
                             Get Started
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
                         </a>
-                        <a href="/quiz" class="px-8 py-3.5 border border-dark-border text-dark-text rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-dark-surface transition-all text-center">
+                        <a href="/quiz" class="px-8 py-4 border border-outline-variant text-on-surface rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-surface-container transition-all">
                             Browse Best Deal
                         </a>
                     </div>
-                    
-                    <!-- Featured Stores -->
-                    <div class="flex items-center gap-4 mt-4">
-                        <span class="font-label-sm text-label-sm uppercase tracking-wider text-dark-text-subtle font-medium">Featured Stores</span>
-                        <div class="flex gap-3 items-center">
-                            <span class="font-bold text-dark-text-muted text-[13px]">CITY CENTER</span>
-                            <span class="text-dark-text-subtle">·</span>
-                            <span class="font-bold text-dark-text-muted text-[13px]">DNA</span>
-                            <span class="text-dark-text-subtle">·</span>
-                            <span class="font-bold text-dark-text-muted text-[13px]">PC CIRCLE</span>
+                    <div class="flex items-center gap-stack-md mt-stack-lg grayscale opacity-60">
+                        <span class="font-label-sm text-label-sm uppercase tracking-widest text-tertiary">Featured Stores</span>
+                        <div class="flex gap-4 items-center font-bold">
+                            <span>CITY CENTER</span>
+                            <span>DNA</span>
+                            <span>PC CIRCLE</span>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Hero Visual -->
-                <div class="relative hidden lg:flex items-center justify-center fade-in" style="animation-delay: 0.2s;">
-                    <div class="relative w-full">
-                        <!-- Laptop Image -->
-                        <div class="relative rounded-2xl overflow-hidden border border-dark-border bg-dark-surface shadow-2xl shadow-black/40">
-                            <img class="w-full h-auto rounded-2xl" alt="Laptop recommendation dashboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8dit3izBW151giaLHJD1r2D1vQIGBOjKX7qlGZkNj_wrjfRhUmVmDqTJSHKOspgVTHbSY3olakOL4WmkqVPHOjudhB2iuANkvi7PVZcH3LqnQPqBcyobCfqGBjKkZCy5Iz5BuVbtS21vdaFN7VIJ0WHvxTPYVzTgzDqKsSEpG-y6eSWmDCt_uZXtcUBPZgINh4ThElEpVzEaNdJk_3MU8Qg8St9keJQFNDNFvxCq9WD5APX2Z8MIiaQ"/>
-                        </div>
-                        
-                        <!-- Floating Card -->
-                        <div class="absolute -bottom-4 -left-4 bg-dark-card border border-dark-border rounded-xl px-4 py-3 shadow-xl flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-jod-green/20 flex items-center justify-center">
-                                <span class="material-symbols-outlined material-filled text-jod-green text-[18px]">bolt</span>
+                <div class="relative hidden lg:block">
+                    <div class="relative glass-card rounded-2xl p-6 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <div class="absolute -top-12 -right-12 w-64 h-64 bg-electric-blue/20 rounded-full blur-[80px]"></div>
+                        <img class="w-full h-auto rounded-lg shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8dit3izBW151giaLHJD1r2D1vQIGBOjKX7qlGZkNj_wrjfRhUmVmDqTJSHKOspgVTHbSY3olakOL4WmkqVPHOjudhB2iuANkvi7PVZcH3LqnQPqBcyobCfqGBjKkZCy5Iz5BuVbtS21vdaFN7VIJ0WHvxTPYVzTgzDqKsSEpG-y6eSWmDCt_uZXtcUBPZgINh4ThElEpVzEaNdJk_3MU8Qg8St9keJQFNDNFvxCq9WD5APX2Z8MIiaQ" alt="Premium Laptop" />
+                        <div class="absolute -bottom-6 -left-6 glass-card p-4 rounded-xl shadow-xl flex items-center gap-4 animate-bounce">
+                            <div class="w-10 h-10 rounded-full bg-jod-green/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-jod-green">bolt</span>
                             </div>
                             <div>
-                                <p class="font-label-md text-label-md text-dark-text font-semibold">Top Pick Found</p>
-                                <p class="font-label-sm text-label-sm text-dark-text-muted">Matching 98% of your needs</p>
+                                <p class="font-label-md text-label-md text-on-surface">Top Pick Found</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">Matching 98% of your needs</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Trust Strip -->
-    <section class="w-full bg-dark-surface border-y border-dark-border py-5 overflow-hidden">
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row items-center justify-center gap-4 text-center">
-            <span class="material-symbols-outlined material-filled text-jod-green text-[24px]">verified_user</span>
-            <p class="font-body-md text-body-md text-dark-text-muted">
-                Data sourced from <span class="text-dark-text font-semibold">City Center</span>, <span class="text-dark-text font-semibold">DNA</span>, and <span class="text-dark-text font-semibold">PC Circle</span> — Jordan's trusted retailers.
-            </p>
-        </div>
-    </section>
-
-    <!-- Features Bento Grid -->
-    <section id="how-it-works" class="py-24 bg-dark-bg grid-bg">
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-            <div class="text-center mb-16">
-                <h2 class="font-headline-lg text-headline-lg text-dark-text mb-4">Why choose LaptopFinder.jo?</h2>
-                <p class="font-body-lg text-body-lg text-dark-text-muted max-w-2xl mx-auto">We cut through the marketing noise to give you hardware recommendations based on logic, availability, and real prices in Jordan.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Feature 1 -->
-                <div class="md:col-span-2 bg-dark-surface rounded-2xl p-8 border border-dark-border flex flex-col md:flex-row gap-8 items-center overflow-hidden">
-                    <div class="flex-1">
-                        <span class="material-symbols-outlined text-electric-blue text-4xl mb-4">calculate</span>
-                        <h3 class="font-headline-md text-headline-md text-dark-text mb-2">Deterministic Engine</h3>
-                        <p class="font-body-md text-body-md text-dark-text-muted">Unlike LLMs that might hallucinate specs, our engine uses a strict weighted mathematical model. We map your specific workloads to CPU/GPU performance tiers.</p>
-                    </div>
-                    <div class="w-full md:w-1/3 aspect-video bg-dark-card rounded-xl overflow-hidden relative border border-dark-border flex items-center justify-center">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-full h-full opacity-10 bg-[radial-gradient(#3B82F6_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <!-- Why Choose Us Section -->
+        <section id="how-it-works" class="py-24 bg-surface-dim">
+            <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+                <div class="text-center mb-16">
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Why choose LaptopFinder.jo?</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Logic-based hardware recommendations, local inventory awareness, and real Jordanian prices.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 glass-card rounded-2xl p-8 border border-dark-border flex flex-col md:flex-row gap-8 items-center overflow-hidden">
+                        <div class="flex-1">
+                            <span class="material-symbols-outlined text-electric-blue text-4xl mb-4">calculate</span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Deterministic Engine</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant">We map your specific workloads to performance tiers based on local availability, not hallucinated AI suggestions.</p>
                         </div>
-                        <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-full md:w-1/3 aspect-video bg-surface-container rounded-lg flex items-center justify-center">
                             <span class="font-display-lg text-electric-blue">100%</span>
                         </div>
                     </div>
-                </div>
-                <!-- Feature 2 -->
-                <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
-                    <span class="material-symbols-outlined text-jod-green text-4xl mb-4">payments</span>
-                    <h3 class="font-headline-md text-headline-md text-dark-text mb-2">Real Local Prices</h3>
-                    <p class="font-body-md text-body-md text-dark-text-muted">Stop looking at Amazon prices that don't include shipping and customs. We show you what's on the shelf in Amman today.</p>
-                </div>
-                <!-- Feature 3 -->
-                <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
-                    <span class="material-symbols-outlined text-dark-text-muted text-4xl mb-4">sync</span>
-                    <h3 class="font-headline-md text-headline-md text-dark-text mb-2">Daily Updates</h3>
-                    <p class="font-body-md text-body-md text-dark-text-muted">We sync daily with Jordan's leading tech retailers to ensure the laptop we recommend is actually in stock.</p>
-                </div>
-                <!-- Feature 4 -->
-                <div class="md:col-span-2 bg-dark-surface rounded-2xl p-8 border border-dark-border flex flex-col md:flex-row-reverse gap-8 items-center overflow-hidden">
-                    <div class="flex-1">
-                        <span class="material-symbols-outlined text-electric-blue text-4xl mb-4">compare_arrows</span>
-                        <h3 class="font-headline-md text-headline-md text-dark-text mb-2">Fair Comparisons</h3>
-                        <p class="font-body-md text-body-md text-dark-text-muted">Compare specs side-by-side using standardized benchmarks. We don't care about brands; we care about the JOD-to-Performance ratio.</p>
-                    </div>
-                    <div class="w-full md:w-1/3 p-4 flex flex-col gap-2">
-                        <div class="h-8 bg-dark-card rounded-lg flex items-center px-4 w-full justify-between border border-dark-border">
-                            <div class="w-24 h-2 bg-electric-blue rounded-full"></div>
-                            <span class="text-[10px] text-dark-text-muted font-medium">9.2/10</span>
-                        </div>
-                        <div class="h-8 bg-dark-card rounded-lg flex items-center px-4 w-[85%] justify-between border border-dark-border">
-                            <div class="w-16 h-2 bg-dark-text-subtle rounded-full"></div>
-                            <span class="text-[10px] text-dark-text-muted font-medium">7.5/10</span>
-                        </div>
-                        <div class="h-8 bg-dark-card rounded-lg flex items-center px-4 w-[95%] justify-between border border-dark-border">
-                            <div class="w-20 h-2 bg-electric-blue rounded-full"></div>
-                            <span class="text-[10px] text-dark-text-muted font-medium">8.8/10</span>
-                        </div>
+                    <div class="glass-card rounded-2xl p-8">
+                        <span class="material-symbols-outlined text-jod-green text-4xl mb-4">payments</span>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Real Local Prices</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant">See what's actually on the shelf in Amman today including local warranty and taxes.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <!-- CTA Section -->
-    <section id="about" class="py-24 bg-dark-surface relative overflow-hidden border-y border-dark-border">
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
-            <div class="bg-dark-card rounded-3xl p-12 md:p-20 text-center flex flex-col items-center gap-8 border border-dark-border">
-                <h2 class="font-display-lg text-display-lg text-dark-text">Ready to find your match?</h2>
-                <p class="font-body-lg text-body-lg text-dark-text-muted max-w-2xl">
-                    It takes less than 60 seconds. Answer 6 questions about your work, budget, and mobility needs, and get the best laptops available in Jordan right now.
+    <!-- Footer -->
+    <footer class="w-full py-stack-lg border-t border-white/5 bg-surface-container-lowest">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div class="flex flex-col gap-stack-md">
+                <span class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</span>
+                <p class="font-body-md text-body-md text-on-tertiary-fixed-variant max-w-xs">
+                    Empowering Jordanian tech enthusiasts to find the perfect hardware using data-driven insights and real-time market pricing.
                 </p>
-                <a href="/quiz" class="px-12 py-5 bg-electric-blue text-white rounded-full font-headline-md text-headline-md font-bold hover:bg-electric-blue-dark transition-all hover:scale-105 active:scale-95">
-                    Start the Laptop Quiz
-                </a>
-                <div class="flex items-center gap-4 text-dark-text-muted font-label-sm text-label-sm">
-                    <span class="flex items-center gap-1"><span class="material-symbols-outlined material-filled text-[16px] text-jod-green">check_circle</span> No Email Required</span>
-                    <span class="flex items-center gap-1"><span class="material-symbols-outlined material-filled text-[16px] text-jod-green">check_circle</span> Free Forever</span>
+            </div>
+            <div class="flex flex-col gap-stack-md">
+                <h4 class="font-label-md text-label-md text-on-surface font-semibold">Quick Links</h4>
+                <ul class="flex flex-col gap-2">
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="#">Contact Us</a></li>
+                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="flex flex-col gap-stack-md">
+                <h4 class="font-label-md text-label-md text-on-surface font-semibold">Market Partners</h4>
+                <div class="flex flex-wrap gap-x-6 gap-y-2">
+                    <a class="text-on-tertiary-fixed-variant hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://citycenter.jo" target="_blank">City Center</a>
+                    <a class="text-on-tertiary-fixed-variant hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://www.dna.jo" target="_blank">DNA Jordan</a>
+                    <a class="text-on-tertiary-fixed-variant hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://pccircle.com" target="_blank">PC Circle</a>
                 </div>
             </div>
         </div>
-    </section>
-</main>
-
-<!-- Footer -->
-<footer class="w-full py-stack-lg border-t border-dark-border bg-dark-bg">
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        <div class="flex flex-col gap-stack-md">
-            <span class="font-headline-md text-headline-md font-bold text-dark-text">LaptopFinder.jo</span>
-            <p class="font-body-md text-body-md text-dark-text-muted max-w-xs">
-                The professional hardware matching platform for the Jordanian market. Helping students, creators, and pros find the right tech.
-            </p>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-stack-lg pt-stack-md border-t border-white/5 text-center">
+            <p class="text-label-sm text-on-tertiary-fixed-variant">© 2026 LaptopFinder.jo. All rights reserved.</p>
         </div>
-        <div class="flex flex-col gap-stack-md">
-            <h4 class="font-label-md text-label-md text-dark-text font-semibold">Quick Links</h4>
-            <ul class="flex flex-col gap-2">
-                <li><a class="text-dark-text-muted hover:text-electric-blue transition-all font-label-sm text-label-sm underline" href="/">Home</a></li>
-                <li><a class="text-dark-text-muted hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a></li>
-            </ul>
-        </div>
-        <div class="flex flex-col gap-stack-md">
-            <h4 class="font-label-md text-label-md text-dark-text font-semibold">Retail Partners</h4>
-            <div class="flex flex-wrap gap-x-6 gap-y-2">
-                <a class="text-dark-text-muted hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://citycenter.jo" target="_blank">City Center</a>
-                <a class="text-dark-text-muted hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://www.dna.jo" target="_blank">DNA Jordan</a>
-                <a class="text-dark-text-muted hover:text-electric-blue underline transition-all font-label-sm text-label-sm" href="https://pccircle.com" target="_blank">PC Circle</a>
-            </div>
-        </div>
-    </div>
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-12 pt-8 border-t border-dark-border flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="font-label-sm text-label-sm text-dark-text-muted">© 2026 LaptopFinder.jo. All rights reserved.</p>
-        <div class="flex gap-6">
-            <span class="material-symbols-outlined text-dark-text-muted cursor-pointer hover:text-electric-blue transition-colors">language</span>
-            <span class="material-symbols-outlined text-dark-text-muted cursor-pointer hover:text-electric-blue transition-colors">share</span>
-        </div>
-    </div>
-</footer>
-
+    </footer>
 </body>
 </html>
