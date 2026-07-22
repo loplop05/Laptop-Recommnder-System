@@ -101,49 +101,21 @@
                 <div class="flex justify-between items-end mb-stack-sm">
                     <div>
                         <span class="text-electric-blue font-label-md text-label-md uppercase tracking-wider">Discovery Phase</span>
-                        <h1 id="quiz-step-title" class="font-headline-lg text-headline-lg-mobile md:text-headline-lg block">What's your budget?</h1>
+                        <h1 id="quiz-step-title" class="font-headline-lg text-headline-lg-mobile md:text-headline-lg block">What's your primary use?</h1>
+                        <p id="quiz-step-subtitle" class="text-on-surface-variant text-body-md mt-1">Select how you'll primarily use your laptop.</p>
                     </div>
-                    <span id="quiz-step-indicator" class="text-on-surface-variant font-label-md text-label-md">Step 1 of 6</span>
+                    <span id="quiz-step-indicator" class="text-on-surface-variant font-label-md text-label-md">Step 1 of 7</span>
                 </div>
                 <div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                    <div id="quiz-progress-bar" class="h-full bg-electric-blue transition-all duration-500 ease-out" style="width: 16.6%"></div>
+                    <div id="quiz-progress-bar" class="h-full bg-electric-blue transition-all duration-500 ease-out" style="width: 14.2%"></div>
                 </div>
             </div>
 
             <!-- Quiz Steps Container -->
-            <div class="relative min-h-[500px]">
+            <div class="relative min-h-[480px]">
                 
-                <!-- Step 1: Budget -->
+                <!-- Step 1: Use Case -->
                 <section class="quiz-step-section" data-step-content="1">
-                    <div class="glass-panel rounded-xl p-stack-lg space-y-stack-lg">
-                        <div class="text-center py-stack-lg">
-                            <span class="text-display-lg font-display-lg text-on-surface"><span id="budget-display-val">1500</span> <span class="text-headline-md font-headline-md text-on-surface-variant">JOD</span></span>
-                            <p class="text-on-surface-variant mt-2 font-body-md text-body-md">Adjust the slider to match your spending limit.</p>
-                        </div>
-                        <div class="px-stack-md">
-                            <input type="range" id="budget-slider" min="300" max="3000" step="50" value="1500" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-electric-blue" />
-                            <input type="hidden" id="budget-input" name="budget" value="1500">
-                            <div class="flex justify-between mt-4 text-on-surface-variant font-label-sm text-label-sm">
-                                <span>300 JOD</span>
-                                <span>1500 JOD</span>
-                                <span>3000+ JOD</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter pt-stack-md">
-                            <div class="p-stack-md rounded-lg bg-surface-container-low border border-white/5 flex gap-stack-md items-start">
-                                <span class="material-symbols-outlined text-electric-blue">info</span>
-                                <p class="text-on-tertiary-fixed-variant font-body-md text-body-md">Most engineering students in Jordan find great value laptops between 600 - 900 JOD.</p>
-                            </div>
-                            <div class="p-stack-md rounded-lg bg-surface-container-low border border-white/5 flex gap-stack-md items-start">
-                                <span class="material-symbols-outlined text-jod-green">local_offer</span>
-                                <p class="text-on-tertiary-fixed-variant font-body-md text-body-md">Prices reflect current listings at City Center, DNA Jordan, and PC Circle.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Step 2: Use Case -->
-                <section class="quiz-step-section hidden" data-step-content="2">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="use_case" value="gaming" checked>
@@ -151,125 +123,201 @@
                                 <span class="material-symbols-outlined text-electric-blue">sports_esports</span>
                             </div>
                             <h3 class="font-headline-md text-headline-md mb-2">Gaming</h3>
-                            <p class="text-on-surface-variant text-body-md">High-performance GPUs for smooth frame rates in modern titles.</p>
+                            <p class="text-on-surface-variant text-body-md">High-performance GPUs for smooth frame rates in modern AAA titles and esports.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="use_case" value="work">
                             <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
                                 <span class="material-symbols-outlined text-electric-blue">business_center</span>
                             </div>
-                            <h3 class="font-headline-md text-headline-md mb-2">Business</h3>
-                            <p class="text-on-surface-variant text-body-md">Reliable, professional build quality with great battery life.</p>
+                            <h3 class="font-headline-md text-headline-md mb-2">Business & Work</h3>
+                            <p class="text-on-surface-variant text-body-md">Reliable performance, sleek professional build, security, and long battery life.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="use_case" value="general">
                             <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
                                 <span class="material-symbols-outlined text-electric-blue">school</span>
                             </div>
-                            <h3 class="font-headline-md text-headline-md mb-2">Student</h3>
-                            <p class="text-on-surface-variant text-body-md">Balanced specs for research, assignments, and media.</p>
+                            <h3 class="font-headline-md text-headline-md mb-2">Student & General</h3>
+                            <p class="text-on-surface-variant text-body-md">Balanced specs for browsing, documents, streaming, and university tasks.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="use_case" value="content_creation">
                             <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
                                 <span class="material-symbols-outlined text-electric-blue">palette</span>
                             </div>
-                            <h3 class="font-headline-md text-headline-md mb-2">Creation</h3>
-                            <p class="text-on-surface-variant text-body-md">Color-accurate displays and multi-core processing power.</p>
+                            <h3 class="font-headline-md text-headline-md mb-2">Content Creation</h3>
+                            <p class="text-on-surface-variant text-body-md">Color-accurate displays, fast multi-core rendering, video editing & 3D design.</p>
                         </label>
                     </div>
                 </section>
 
-                <!-- Step 3: Performance -->
+                <!-- Step 2: Budget -->
+                <section class="quiz-step-section hidden" data-step-content="2">
+                    <div class="glass-panel rounded-xl p-stack-lg space-y-stack-lg">
+                        <div class="text-center py-stack-lg">
+                            <span class="text-display-lg font-display-lg text-on-surface"><span id="budget-display-val">1500</span> <span class="text-headline-md font-headline-md text-on-surface-variant">JOD</span></span>
+                            <p class="text-on-surface-variant mt-2 font-body-md text-body-md">Adjust the slider to set your maximum budget limit.</p>
+                        </div>
+                        <div class="px-stack-md">
+                            <input type="range" id="budget-slider" min="100" max="5000" step="50" value="1500" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-electric-blue" />
+                            <input type="hidden" id="budget-input" name="budget" value="1500">
+                            <div class="flex justify-between mt-4 text-on-surface-variant font-label-sm text-label-sm">
+                                <span>100 JOD</span>
+                                <span>1500 JOD</span>
+                                <span>5000+ JOD</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter pt-stack-md">
+                            <div class="p-stack-md rounded-lg bg-surface-container-low border border-white/5 flex gap-stack-md items-start">
+                                <span class="material-symbols-outlined text-electric-blue">info</span>
+                                <p class="text-on-tertiary-fixed-variant font-body-md text-body-md">Most students and professionals in Jordan find excellent value laptops between 500 - 1200 JOD.</p>
+                            </div>
+                            <div class="p-stack-md rounded-lg bg-surface-container-low border border-white/5 flex gap-stack-md items-start">
+                                <span class="material-symbols-outlined text-jod-green">local_offer</span>
+                                <p class="text-on-tertiary-fixed-variant font-body-md text-body-md">Prices reflect current live listings at City Center, DNA Jordan, and PC Circle.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3: Screen Size -->
                 <section class="quiz-step-section hidden" data-step-content="3">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="performance" value="entry" checked>
-                            <h3 class="font-headline-md text-headline-md mb-2">Entry Level</h3>
-                            <p class="text-on-surface-variant text-body-md">Basic tasks, web browsing, and office work.</p>
-                        </label>
-                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="performance" value="medium">
-                            <h3 class="font-headline-md text-headline-md mb-2">Balanced</h3>
-                            <p class="text-on-surface-variant text-body-md">Multitasking, smooth experience for most users.</p>
-                        </label>
-                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="performance" value="high">
-                            <h3 class="font-headline-md text-headline-md mb-2">High End</h3>
-                            <p class="text-on-surface-variant text-body-md">Demanding software, heavy workloads, and longevity.</p>
-                        </label>
-                    </div>
-                </section>
-
-                <!-- Step 4: Screen Size -->
-                <section class="quiz-step-section hidden" data-step-content="4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="screen_size" value="13-14" checked>
-                            <h3 class="font-headline-md text-headline-md mb-2">13" - 14"</h3>
-                            <p class="text-on-surface-variant text-body-md">Compact and lightweight for maximum portability.</p>
+                            <div class="w-10 h-10 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-4">
+                                <span class="material-symbols-outlined text-electric-blue">laptop_mac</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">13" - 14" Portable</h3>
+                            <p class="text-on-surface-variant text-body-md">Compact, ultra-lightweight, ideal for commuters and travel.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="screen_size" value="15-16">
-                            <h3 class="font-headline-md text-headline-md mb-2">15" - 16"</h3>
-                            <p class="text-on-surface-variant text-body-md">The standard size for productivity and media.</p>
+                            <div class="w-10 h-10 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-4">
+                                <span class="material-symbols-outlined text-electric-blue">laptop</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">15" - 16" Standard</h3>
+                            <p class="text-on-surface-variant text-body-md">The perfect balance of screen workspace and physical size.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="screen_size" value="17+">
-                            <h3 class="font-headline-md text-headline-md mb-2">17"+</h3>
-                            <p class="text-on-surface-variant text-body-md">Large display for desktop-like experience.</p>
+                            <div class="w-10 h-10 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-4">
+                                <span class="material-symbols-outlined text-electric-blue">desktop_windows</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">17"+ Large Display</h3>
+                            <p class="text-on-surface-variant text-body-md">Maximum screen real estate for immersive gaming & multitasking.</p>
                         </label>
                     </div>
                 </section>
 
-                <!-- Step 5: Portability -->
-                <section class="quiz-step-section hidden" data-step-content="5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <!-- Step 4: Portability -->
+                <section class="quiz-step-section hidden" data-step-content="4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="portability" value="high" checked>
                             <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
                                 <span class="material-symbols-outlined text-electric-blue">flight_takeoff</span>
                             </div>
-                            <h3 class="font-headline-md text-headline-md mb-2">Highly Portable</h3>
-                            <p class="text-on-surface-variant text-body-md">Thin and light for carrying everywhere daily.</p>
+                            <h3 class="font-headline-md text-headline-md mb-2">Ultra Light</h3>
+                            <p class="text-on-surface-variant text-body-md">Carried in backpack daily between university or coffee shops.</p>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="portability" value="medium">
+                            <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
+                                <span class="material-symbols-outlined text-electric-blue">work</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">Balanced Mobility</h3>
+                            <p class="text-on-surface-variant text-body-md">Moved occasionally between home desk and office/class.</p>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="portability" value="low">
                             <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mb-stack-md">
                                 <span class="material-symbols-outlined text-electric-blue">desktop_windows</span>
                             </div>
-                            <h3 class="font-headline-md text-headline-md mb-2">Desk Focused</h3>
-                            <p class="text-on-surface-variant text-body-md">Weight doesn't matter, usually stays in one place.</p>
+                            <h3 class="font-headline-md text-headline-md mb-2">Desk Replacement</h3>
+                            <p class="text-on-surface-variant text-body-md">Weight does not matter; stays plugged in on desk for max power.</p>
                         </label>
                     </div>
                 </section>
 
-                <!-- Step 6: Brand Preference -->
+                <!-- Step 5: Performance Need -->
+                <section class="quiz-step-section hidden" data-step-content="5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="performance" value="entry" checked>
+                            <h3 class="font-headline-md text-headline-md mb-2">Entry Level</h3>
+                            <p class="text-on-surface-variant text-body-md">Basic web browsing, video streaming, and document processing.</p>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="performance" value="medium">
+                            <h3 class="font-headline-md text-headline-md mb-2">Balanced Power</h3>
+                            <p class="text-on-surface-variant text-body-md">Smooth multitasking, light gaming, and heavy tab usage.</p>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-left border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="performance" value="high">
+                            <h3 class="font-headline-md text-headline-md mb-2">Powerhouse</h3>
+                            <p class="text-on-surface-variant text-body-md">Max CPU & GPU speeds for AAA gaming, 4K rendering, or compiling.</p>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Step 6: OS Preference -->
                 <section class="quiz-step-section hidden" data-step-content="6">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="os_pref" value="windows" checked>
+                            <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mx-auto mb-stack-md">
+                                <span class="material-symbols-outlined text-electric-blue">window</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">Windows</h3>
+                            <p class="text-on-surface-variant text-body-md">Maximum game & software compatibility.</p>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="os_pref" value="macos">
+                            <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mx-auto mb-stack-md">
+                                <span class="material-symbols-outlined text-electric-blue">apple</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">macOS</h3>
+                            <p class="text-on-surface-variant text-body-md">Apple Silicon efficiency, battery & build quality.</p>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="os_pref" value="any">
+                            <div class="w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center mx-auto mb-stack-md">
+                                <span class="material-symbols-outlined text-electric-blue">devices</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md mb-2">No Preference</h3>
+                            <p class="text-on-surface-variant text-body-md">Open to both Windows & Mac based on best specs.</p>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Step 7: Brand Preference -->
+                <section class="quiz-step-section hidden" data-step-content="7">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-gutter">
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="brand" value="Any" checked>
-                            <h3 class="font-headline-md text-headline-md">Any</h3>
+                            <h3 class="font-headline-md text-headline-md">Any Brand</h3>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="brand" value="Apple">
                             <h3 class="font-headline-md text-headline-md">Apple</h3>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="brand" value="Dell">
-                            <h3 class="font-headline-md text-headline-md">Dell</h3>
-                        </label>
-                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="brand" value="HP">
-                            <h3 class="font-headline-md text-headline-md">HP</h3>
+                            <input type="radio" name="brand" value="ASUS">
+                            <h3 class="font-headline-md text-headline-md">ASUS</h3>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="brand" value="Lenovo">
                             <h3 class="font-headline-md text-headline-md">Lenovo</h3>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
-                            <input type="radio" name="brand" value="Asus">
-                            <h3 class="font-headline-md text-headline-md">Asus</h3>
+                            <input type="radio" name="brand" value="HP">
+                            <h3 class="font-headline-md text-headline-md">HP</h3>
+                        </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="brand" value="Dell">
+                            <h3 class="font-headline-md text-headline-md">Dell</h3>
                         </label>
                         <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
                             <input type="radio" name="brand" value="Acer">
@@ -279,6 +327,10 @@
                             <input type="radio" name="brand" value="MSI">
                             <h3 class="font-headline-md text-headline-md">MSI</h3>
                         </label>
+                        <label class="quiz-option glass-panel group p-stack-md rounded-xl text-center border-2 border-transparent hover:border-electric-blue/50 transition-all cursor-pointer">
+                            <input type="radio" name="brand" value="Razer">
+                            <h3 class="font-headline-md text-headline-md">Razer</h3>
+                        </label>
                     </div>
                 </section>
 
@@ -286,10 +338,10 @@
 
             <!-- Navigation Buttons -->
             <div class="flex justify-between mt-stack-lg pt-stack-lg border-t border-white/5">
-                <button id="prev-btn" type="button" class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors">
+                <button id="prev-btn" type="button" class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors cursor-pointer">
                     <span class="material-symbols-outlined">arrow_back</span> Previous
                 </button>
-                <button id="next-btn" type="button" class="bg-electric-blue text-white px-8 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-2">
+                <button id="next-btn" type="button" class="bg-electric-blue text-white px-8 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 cursor-pointer">
                     Next Step
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
@@ -312,42 +364,5 @@
     </footer>
 
     <script src="/static/js/quiz.js"></script>
-    <script>
-        // Update step title dynamically
-        const stepTitles = [
-            "What's your budget?",
-            "What's the primary use?",
-            "How much power do you need?",
-            "What's your ideal screen size?",
-            "How important is mobility?",
-            "Any brand preference?"
-        ];
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const nextBtn = document.getElementById('next-btn');
-            const prevBtn = document.getElementById('prev-btn');
-            const titleEl = document.getElementById('quiz-step-title');
-            
-            let step = 1;
-            
-            function updateTitle() {
-                titleEl.textContent = stepTitles[step - 1];
-            }
-            
-            nextBtn.addEventListener('click', () => {
-                if (step < 6) {
-                    step++;
-                    updateTitle();
-                }
-            });
-            
-            prevBtn.addEventListener('click', () => {
-                if (step > 1) {
-                    step--;
-                    updateTitle();
-                }
-            });
-        });
-    </script>
 </body>
 </html>

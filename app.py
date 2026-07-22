@@ -89,12 +89,16 @@ class PreferenceValidator:
         except (TypeError, ValueError):
             return None, f"Budget must be between {BUDGET_MIN} and {BUDGET_MAX} JOD"
 
+        # Normalize brand casing (e.g. 'Asus' -> 'ASUS', 'apple' -> 'Apple')
+        raw_brand = str(data.get('brand', 'Any')).strip()
+        brand_map = {b.lower(): b for b in ALLOWED_BRANDS}
+        brand = brand_map.get(raw_brand.lower(), raw_brand)
+
         validations = [
             ('use_case', ALLOWED_USE_CASES),
             ('performance', ALLOWED_PERFORMANCE),
             ('screen_size', ALLOWED_SCREEN_SIZES),
             ('portability', ALLOWED_PORTABILITIES),
-            ('brand', ALLOWED_BRANDS)
         ]
 
         for field, allowed in validations:
@@ -102,13 +106,16 @@ class PreferenceValidator:
             if val not in allowed:
                 return None, f"Invalid {field} value"
 
+        if brand not in ALLOWED_BRANDS:
+            return None, "Invalid brand value"
+
         return {
             'budget': budget,
             'use_case': data.get('use_case'),
             'performance': data.get('performance'),
             'screen_size': data.get('screen_size'),
             'portability': data.get('portability'),
-            'brand': data.get('brand'),
+            'brand': brand,
         }, None
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
