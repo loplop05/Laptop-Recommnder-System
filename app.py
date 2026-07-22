@@ -25,10 +25,10 @@ def set_security_headers(response):
     """Attach strict security headers to every response."""
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
-        "script-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; "
         "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' https://images.unsplash.com https://pccircle.com https://citycenter.jo https://gts.jo https://os-jo.com data:; "
+        "img-src 'self' https://images.unsplash.com https://lh3.googleusercontent.com https://pccircle.com https://citycenter.jo https://gts.jo https://os-jo.com data:; "
         "connect-src 'self'; "
         "object-src 'none'; "
         "frame-ancestors 'none';"
