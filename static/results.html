@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Recommendations | LaptopFinder.jo</title>
+    <title>Your Recommendations | LaptopFinder.jo</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     
     <!-- Theme Configuration -->
@@ -15,61 +15,23 @@
         theme: {
           extend: {
             "colors": {
-                    "surface-container-high": "#2a2a2c",
-                    "tertiary-container": "#717176",
-                    "on-tertiary": "#2f3034",
-                    "on-primary": "#002b75",
-                    "on-secondary": "#2e3135",
-                    "on-primary-fixed-variant": "#003fa4",
-                    "error-container": "#93000a",
-                    "on-primary-container": "#f8f7ff",
-                    "on-error-container": "#ffdad6",
-                    "surface-dim": "#131315",
-                    "inverse-primary": "#0054d6",
-                    "inverse-surface": "#e4e2e4",
-                    "on-tertiary-fixed-variant": "#46464b",
-                    "tertiary-fixed-dim": "#c7c6cb",
-                    "primary-container": "#0066ff",
-                    "outline-variant": "#424656",
-                    "surface-container-low": "#1b1b1d",
-                    "surface-bright": "#39393b",
-                    "primary": "#b3c5ff",
-                    "jod-green": "#10B981",
-                    "surface-container-highest": "#353437",
-                    "on-surface": "#e4e2e4",
-                    "secondary-fixed-dim": "#c5c6cc",
-                    "error": "#ffb4ab",
-                    "surface-container": "#1f1f21",
-                    "on-background": "#e4e2e4",
-                    "surface-container-lowest": "#0e0e10",
-                    "background": "#131315",
-                    "on-tertiary-container": "#f8f7fc",
-                    "tertiary": "#c7c6cb",
+                    "dark-bg": "#0d1117",
+                    "dark-surface": "#161b22",
+                    "dark-card": "#1c2128",
+                    "dark-border": "#30363d",
+                    "dark-text": "#f0f6fc",
+                    "dark-text-muted": "#8b949e",
+                    "dark-text-subtle": "#6e7681",
                     "electric-blue": "#3B82F6",
-                    "secondary-fixed": "#e1e2e8",
-                    "tertiary-fixed": "#e3e2e7",
-                    "on-error": "#690005",
-                    "primary-fixed-dim": "#b3c5ff",
-                    "surface-tint": "#b3c5ff",
-                    "surface-charcoal": "#121214",
-                    "primary-fixed": "#dae1ff",
-                    "on-secondary-fixed-variant": "#44474c",
-                    "surface-variant": "#353437",
-                    "outline": "#8c90a1",
-                    "on-primary-fixed": "#001849",
-                    "on-secondary-container": "#b3b5bb",
-                    "secondary-container": "#44474c",
-                    "secondary": "#c5c6cc",
-                    "inverse-on-surface": "#303032",
-                    "on-surface-variant": "#c2c6d8",
-                    "on-tertiary-fixed": "#1a1b1f",
-                    "surface": "#131315",
-                    "on-secondary-fixed": "#191c20"
+                    "electric-blue-dark": "#2563eb",
+                    "jod-green": "#10B981",
+                    "jod-green-dark": "#059669",
             },
             "borderRadius": {
                     "DEFAULT": "0.25rem",
                     "lg": "0.5rem",
                     "xl": "0.75rem",
+                    "2xl": "1rem",
                     "full": "9999px"
             },
             "spacing": {
@@ -84,7 +46,6 @@
             "fontFamily": {
                     "body-lg": ["Inter"],
                     "headline-lg": ["Plus Jakarta Sans"],
-                    "headline-lg-mobile": ["Plus Jakarta Sans"],
                     "headline-md": ["Plus Jakarta Sans"],
                     "display-lg": ["Plus Jakarta Sans"],
                     "label-md": ["Inter"],
@@ -94,7 +55,6 @@
             "fontSize": {
                     "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
                     "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
-                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
                     "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
                     "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
                     "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
@@ -107,94 +67,195 @@
     </script>
     <style>
         body {
-            background-color: #131315;
-            color: #e4e2e4;
+            background-color: #0d1117;
+            color: #f0f6fc;
             scroll-behavior: smooth;
         }
-        .glass-card {
-            background: rgba(29, 29, 31, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        .material-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stagger-1 { animation-delay: 0.05s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.15s; opacity: 0; }
     </style>
 </head>
-<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col">
 
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50">
+<nav class="fixed top-0 w-full z-50 bg-dark-bg/90 backdrop-blur-md border-b border-dark-border">
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
         <div class="flex items-center gap-stack-md">
-            <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</a>
+            <a href="/" class="font-headline-md text-headline-md font-bold text-dark-text">LaptopFinder.jo</a>
         </div>
-        <!-- Desktop Nav -->
         <div class="hidden md:flex items-center gap-8">
-            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/">Home</a>
-            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/#how-it-works">How it Works</a>
-            <a class="text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-electric-blue dark:hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="/#about">About</a>
+            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="/">Home</a>
+            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="/#how-it-works">How it Works</a>
+            <a class="text-dark-text-muted font-medium hover:text-dark-text transition-colors duration-200 font-label-md text-label-md" href="/#about">About</a>
         </div>
         <div class="flex items-center">
-            <a href="/quiz" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-md text-label-md font-bold active:scale-95 transition-transform hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+            <a href="/quiz" class="bg-dark-surface hover:bg-dark-card border border-dark-border text-dark-text px-5 py-2 rounded-full font-label-md text-label-md font-semibold transition-all hover:border-dark-text-muted">
                 Start Quiz
             </a>
         </div>
     </div>
 </nav>
 
-<main class="relative pt-24 pb-16 flex-grow px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
-    <div class="text-center mb-12">
-        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Your AI-Powered Recommendations</h2>
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Based on your answers, here are the best laptops matching your requirements available in Jordan today.</p>
-    </div>
+<!-- Breadcrumb -->
+<div class="pt-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
+    <nav aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 font-label-sm text-label-sm">
+            <li>
+                <a href="/" class="text-dark-text-muted hover:text-electric-blue transition-colors flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">home</span>
+                    Home
+                </a>
+            </li>
+            <li><span class="material-symbols-outlined text-[14px] text-dark-text-subtle">chevron_right</span></li>
+            <li>
+                <a href="/quiz" class="text-dark-text-muted hover:text-electric-blue transition-colors">
+                    Quiz
+                </a>
+            </li>
+            <li><span class="material-symbols-outlined text-[14px] text-dark-text-subtle">chevron_right</span></li>
+            <li class="text-electric-blue font-semibold">
+                Recommendations
+            </li>
+        </ol>
+    </nav>
+</div>
 
-    <!-- Recommendations Grid Container -->
-    <div id="recommendations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        <!-- populated by results.js -->
-        <div class="col-span-full text-center py-12">
-            <div class="w-12 h-12 border-4 border-electric-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-outline">Loading your custom recommendation list...</p>
-        </div>
-    </div>
+<!-- Content Area -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full py-8 flex-grow">
+    <div class="w-full flex flex-col md:flex-row gap-8 items-start">
+        
+        <!-- Sidebar (User Preferences Summary) -->
+        <aside id="sidebar" class="w-full md:w-80 shrink-0 flex flex-col gap-6">
+            <div class="bg-dark-card rounded-2xl p-6 border border-dark-border sticky top-24">
+                <h3 class="font-headline-md text-[20px] text-dark-text font-bold mb-6">Your Setup</h3>
+                <div class="flex flex-col gap-5">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">work</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Use Case</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-dark-text font-medium" id="summary-use-case">Work</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">speed</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Performance</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-dark-text font-medium" id="summary-performance">High</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">laptop</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Screen Size</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-dark-text font-medium" id="summary-screen-size">15" - 16"</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">flight</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Portability</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-dark-text font-medium" id="summary-portability">High</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">brand_awareness</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Brand</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-dark-text font-medium" id="summary-brand">Any Brand</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-dark-text-subtle text-[11px] font-semibold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[16px]">payments</span>
+                            <span class="font-label-sm text-label-sm font-semibold uppercase">Budget</span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <p class="font-body-md text-body-md text-dark-text font-semibold" id="summary-budget">1500</p>
+                            <p class="text-dark-text-muted font-medium">JOD</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-dark-border flex flex-col gap-3">
+                    <a href="/quiz" class="w-full px-4 py-3 bg-dark-surface text-dark-text rounded-xl border border-dark-border font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-dark-border transition-all">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Restart Quiz
+                    </a>
+                    <a href="/" class="w-full px-4 py-3 text-dark-text-muted rounded-xl font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:text-dark-text transition-all">
+                        <span class="material-symbols-outlined text-[18px]">home</span>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </aside>
 
-    <!-- Start Over Bar -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-6 p-8 glass-card rounded-2xl border-white/5">
-        <div>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-1">Didn't find what you need?</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant">Adjust your preferences or set a different budget to search again.</p>
+        <!-- Results Area -->
+        <div class="flex-grow w-full">
+            <header class="mb-10 flex flex-col gap-3">
+                <div class="inline-flex items-center gap-2 w-fit px-3 py-1 rounded-full bg-jod-green/10 border border-jod-green/30 text-jod-green">
+                    <span class="material-symbols-outlined material-filled text-[16px]">bolt</span>
+                    <span class="font-label-md text-label-md font-semibold">Analysis Complete</span>
+                </div>
+                <h2 class="font-headline-lg text-headline-lg text-dark-text font-bold">Your Top Matches in Jordan</h2>
+                <p class="font-body-lg text-body-lg text-dark-text-muted">We've filtered thousands of listings to find the best match for your exact needs.</p>
+            </header>
+            
+            <div id="loading-spinner" class="flex flex-col items-center justify-center py-20 gap-4">
+                <div class="w-12 h-12 border-3 border-electric-blue border-t-transparent rounded-full animate-spin"></div>
+                <p id="status-text" class="text-dark-text-muted font-medium">Loading your recommendations...</p>
+            </div>
+
+            <div id="results-container" class="flex flex-col gap-8 hidden fade-in"></div>
+
+            <!-- Error Display -->
+            <div id="error-container" class="flex flex-col items-center justify-center py-16 gap-4 hidden text-center">
+                <div class="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                    <span class="material-symbols-outlined text-[32px]">error</span>
+                </div>
+                <p id="error-message" class="text-dark-text font-semibold text-lg">Something went wrong.</p>
+                <p class="text-dark-text-muted max-w-md font-medium">Our recommendation engine couldn't connect to the database. Please check your inputs and try again.</p>
+                <button id="retry-button" class="px-6 py-2 bg-electric-blue text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-electric-blue-dark transition-all">
+                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                    Retry
+                </button>
+            </div>
+
+            <!-- Start Over -->
+            <div id="start-over-bar" class="hidden mt-10 p-8 bg-dark-card rounded-2xl border border-dark-border flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h3 class="font-headline-md text-headline-md text-dark-text mb-1">Didn't find what you need?</h3>
+                    <p class="font-body-md text-body-md text-dark-text-muted">Adjust your preferences or set a different budget to search again.</p>
+                </div>
+                <a href="/quiz" class="px-6 py-3 bg-dark-surface border border-dark-border text-dark-text rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-dark-border transition-all">
+                    <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                    Start Quiz Again
+                </a>
+            </div>
         </div>
-        <a href="/quiz" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-on-surface rounded-xl font-label-md text-label-md font-bold flex items-center gap-2 transition-all">
-            <span class="material-symbols-outlined">restart_alt</span>
-            Start Quiz Again
-        </a>
     </div>
 </main>
 
 <!-- Footer -->
-<footer class="w-full py-stack-lg border-t border-white/5 bg-surface-container-lowest mt-16">
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        <div class="flex flex-col gap-stack-md">
-            <span class="font-headline-md text-headline-md font-bold text-on-surface">LaptopFinder.jo</span>
-            <p class="font-body-md text-body-md text-on-tertiary-fixed-variant max-w-xs">
-                Helping Jordanians find the perfect tech at the right price since 2024.
-            </p>
-        </div>
-        <div class="flex flex-col gap-stack-md col-span-2 md:col-span-1 grid grid-cols-2 gap-4">
-            <div>
-                <h4 class="font-label-md text-label-md text-on-surface font-semibold mb-2">Quick Links</h4>
-                <ul class="flex flex-col gap-1">
-                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="/">Home</a></li>
-                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a></li>
-                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://citycenter.jo" target="_blank">City Center</a></li>
-                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://www.dna.jo" target="_blank">DNA Jordan</a></li>
-                    <li><a class="text-on-tertiary-fixed-variant hover:text-electric-blue dark:hover:text-primary transition-all font-label-sm text-label-sm" href="https://pccircle.com" target="_blank">PC Circle</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">© 2026 LaptopFinder.jo. All rights reserved.</p>
+<footer class="w-full py-6 border-t border-dark-border bg-dark-bg">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="font-label-sm text-label-sm text-dark-text-muted">© 2026 LaptopFinder.jo. All rights reserved.</p>
         <div class="flex gap-6">
-            <span class="material-symbols-outlined text-on-tertiary-fixed-variant cursor-pointer hover:text-electric-blue">share</span>
-            <span class="material-symbols-outlined text-on-tertiary-fixed-variant cursor-pointer hover:text-electric-blue">chat_bubble</span>
+            <a class="text-dark-text-muted hover:text-electric-blue transition-colors font-label-sm text-label-sm" href="/">Home</a>
+            <a class="text-dark-text-muted hover:text-electric-blue transition-colors font-label-sm text-label-sm" href="/quiz">Start Quiz</a>
+            <span class="material-symbols-outlined text-dark-text-muted cursor-pointer hover:text-electric-blue transition-colors text-[18px]">share</span>
         </div>
     </div>
 </footer>

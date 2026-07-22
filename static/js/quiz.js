@@ -45,18 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Previous button opacity and clickability
         if (currentStep === 1) {
-            prevBtn.classList.add('opacity-50', 'pointer-events-none');
+            prevBtn.classList.add('opacity-40', 'pointer-events-none');
         } else {
-            prevBtn.classList.remove('opacity-50', 'pointer-events-none');
+            prevBtn.classList.remove('opacity-40', 'pointer-events-none');
         }
 
         // Change button text on final step
         if (currentStep === totalSteps) {
             nextBtn.innerHTML = `Review Recommendations <span class="material-symbols-outlined text-[18px]">check</span>`;
-            nextBtn.className = "px-8 py-3 bg-jod-green text-white rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
+            nextBtn.className = "px-8 py-3 bg-jod-green text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-jod-green-dark transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
         } else {
             nextBtn.innerHTML = `Next Step <span class="material-symbols-outlined text-[18px]">arrow_forward</span>`;
-            nextBtn.className = "px-8 py-3 bg-electric-blue text-white rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
+            nextBtn.className = "px-8 py-3 bg-electric-blue text-white rounded-full font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-electric-blue-dark transition-all hover:scale-[1.02] active:scale-95 cursor-pointer";
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -83,13 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 budget: parseInt(budgetInput.value, 10)
             };
 
-            // Save payload to sessionStorage
-            sessionStorage.setItem('quiz_payload', JSON.stringify(payload));
+            // Save payload to sessionStorage (for sidebar display on results page)
+            sessionStorage.setItem('quiz_data', JSON.stringify(payload));
 
             // Show loading animation
             showLoading(true);
 
-            // Fetch and save results to localStorage, then redirect
+            // Fetch and save results to sessionStorage, then redirect
             setTimeout(async () => {
                 try {
                     const response = await fetch('/api/recommend', {
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     const result = await response.json();
                     
-                    // Store recommendations
+                    // Store recommendations in sessionStorage
                     sessionStorage.setItem('quiz_results', JSON.stringify(result.recommendations || []));
                     
                     // Redirect to results page
